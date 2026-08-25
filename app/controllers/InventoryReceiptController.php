@@ -45,16 +45,23 @@ class InventoryReceiptController extends Controller
 
         // Quick restock from stock_report
         $quickIngredientId = isset($_GET['ingredient_id']) ? (int)$_GET['ingredient_id'] : null;
-        $quickQty = isset($_GET['qty']) ? (int)$_GET['qty'] : null;
+        $quickQty = isset($_GET['qty']) ? (float)$_GET['qty'] : null;
         $quickIngredient = null;
         if ($quickIngredientId) {
             $quickIngredient = $this->ingredientModel->find($quickIngredientId);
         }
 
+        // Lấy old input và form errors nếu có từ session
+        $oldInput = $_SESSION['old_input'] ?? null;
+        $formErrors = $_SESSION['form_errors'] ?? [];
+        unset($_SESSION['old_input'], $_SESSION['form_errors']);
+
         $this->view('inventory_receipt/create', [
             'ingredients' => $ingredients,
             'quickIngredient' => $quickIngredient,
-            'quickQty' => $quickQty
+            'quickQty' => $quickQty,
+            'oldInput' => $oldInput,
+            'formErrors' => $formErrors
         ]);
     }
 
@@ -68,15 +75,177 @@ class InventoryReceiptController extends Controller
 
         $ingredients = $this->ingredientModel->all('name', 'ASC');
 
-        // Restock cart is in sessionStorage (client-side), we'll pass it to view
-        // View will pre-populate form from JavaScript/POST
+        $oldInput = $_SESSION['old_input'] ?? null;
+        $formErrors = $_SESSION['form_errors'] ?? [];
+        unset($_SESSION['old_input'], $_SESSION['form_errors']);
 
         $this->view('inventory_receipt/create', [
             'ingredients' => $ingredients,
             'fromRestock' => true,
             'quickIngredient' => null,
-            'quickQty' => null
+            'quickQty' => null,
+            'oldInput' => $oldInput,
+            'formErrors' => $formErrors
         ]);
+    }
+
+    /**
+     * Validate chi tiết dữ liệu phiếu nhập kho
+     */
+    private function validateReceiptData($data)
+    {
+        $errors = [];
+
+        // 1. Validate Nhà cung cấp (supplier)
+        $supplier = isset($data['supplier']) ? trim($data['supplier']) : '';
+        if (isset($data['supplier']) && $data['supplier'] !== '' && $supplier === '') {
+            $errors[] = 'Tên nhà cung cấp không được chỉ chứa khoảng trắng.';
+        } elseif ($supplier !== '') {
+            $len = mb_strlen($supplier, 'UTF-8');
+            if ($len < 2) {
+                $errors[] = 'Tên nhà cung cấp phải có tối thiểu 2 ký tự.';
+            } elseif ($len > 100) {
+                $errors[] = 'Tên nhà cung cấp không được vượt quá 100 ký tự.';
+            }
+        }
+
+        // 2. Validate Ngày nhập (receipt_date)
+        $receiptDate = isset($data['receipt_date']) ? trim($data['receipt_date']) : '';
+        if (empty($receiptDate)) {
+            $errors[] = 'Ngày nhập kho là bắt buộc, không được để trống.';
+        } else {
+            // Kiểm tra định dạng YYYY-MM-DD
+            if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $receiptDate, $matches)) {
+                $errors[] = 'Định dạng ngày nhập không hợp lệ (định dạng chuẩn: YYYY-MM-DD).';
+            } else {
+                $year = (int)$matches[1];
+                $month = (int)$matches[2];
+                $day = (int)$matches[3];
+                if (!checkdate($month, $day, $year)) {
+                    $errors[] = 'Ngày nhập không hợp lệ trong lịch (VD: ngày không tồn tại hoặc sai năm nhuận).';
+                } else {
+                    $currentDate = date('Y-m-d');
+                    if ($receiptDate > $currentDate) {
+                        $errors[] = 'Ngày nhập kho không được lớn hơn ngày hiện tại (' . date('d/m/Y') . ').';
+                    } elseif ($receiptDate < '2020-01-01') {
+                        $errors[] = 'Ngày nhập kho không được nhỏ hơn ngày 01/01/2020.';
+                    }
+                }
+            }
+        }
+
+        // 3. Validate Ghi chú (note)
+        $note = isset($data['note']) ? trim($data['note']) : '';
+        if ($note !== '') {
+            if (mb_strlen($note, 'UTF-8') > 500) {
+                $errors[] = 'Ghi chú không được vượt quá 500 ký tự.';
+            }
+        }
+
+        // 4. Validate Danh sách chi tiết nguyên liệu (Detail Items)
+        if (isset($data['ingredient_id']) && !is_array($data['ingredient_id'])) {
+            $data['ingredient_id'] = [$data['ingredient_id']];
+        }
+        if (isset($data['qty']) && !is_array($data['qty'])) {
+            $data['qty'] = [$data['qty']];
+        }
+        if (isset($data['unit_price']) && !is_array($data['unit_price'])) {
+            $data['unit_price'] = [$data['unit_price']];
+        }
+
+        $ingredientIds = $data['ingredient_id'] ?? [];
+        $qtys = $data['qty'] ?? [];
+        $unitPrices = $data['unit_price'] ?? [];
+
+        if (!is_array($ingredientIds) || count($ingredientIds) === 0) {
+            $errors[] = 'Phiếu nhập kho phải có ít nhất một dòng nguyên liệu.';
+            return ['errors' => $errors, 'items' => []];
+        }
+
+        $allIngredients = $this->ingredientModel->all();
+        $ingredientMap = [];
+        foreach ($allIngredients as $ing) {
+            $ingredientMap[$ing['id']] = $ing;
+        }
+
+        $validItems = [];
+        $seenIngredients = [];
+        $hasAnyValidRow = false;
+
+        $rowCount = count($ingredientIds);
+        for ($i = 0; $i < $rowCount; $i++) {
+            $rowNum = $i + 1;
+            $ingId = isset($ingredientIds[$i]) ? trim($ingredientIds[$i]) : '';
+            $rawQty = isset($qtys[$i]) ? trim((string)$qtys[$i]) : '';
+            $rawPrice = isset($unitPrices[$i]) ? trim((string)$unitPrices[$i]) : '';
+
+            // Kiểm tra nguyên liệu
+            if ($ingId === '') {
+                $errors[] = "Dòng {$rowNum}: Vui lòng chọn nguyên liệu.";
+            } elseif (!isset($ingredientMap[$ingId])) {
+                $errors[] = "Dòng {$rowNum}: Nguyên liệu (ID: {$ingId}) không tồn tại trong hệ thống.";
+            } else {
+                $ingName = $ingredientMap[$ingId]['name'] ?? "ID $ingId";
+                // Kiểm tra trùng lặp nguyên liệu giữa các dòng
+                if (isset($seenIngredients[$ingId])) {
+                    $prevRow = $seenIngredients[$ingId];
+                    $errors[] = "Dòng {$rowNum}: Nguyên liệu '{$ingName}' bị trùng lặp với dòng {$prevRow}. Vui lòng gộp số lượng hoặc chọn nguyên liệu khác.";
+                } else {
+                    $seenIngredients[$ingId] = $rowNum;
+                }
+            }
+
+            // Kiểm tra số lượng
+            if ($rawQty === '' || !is_numeric($rawQty)) {
+                $errors[] = "Dòng {$rowNum}: Số lượng nhập không hợp lệ hoặc chưa được điền.";
+            } else {
+                $qty = (float)$rawQty;
+                if ($qty <= 0) {
+                    $errors[] = "Dòng {$rowNum}: Số lượng nhập phải lớn hơn 0.";
+                } elseif ($qty > 99999) {
+                    $errors[] = "Dòng {$rowNum}: Số lượng nhập không được vượt quá 99.999.";
+                } else {
+                    // Kiểm tra số chữ số thập phân (tối đa 3 chữ số)
+                    $dotPos = strpos($rawQty, '.');
+                    if ($dotPos !== false) {
+                        $decPart = substr($rawQty, $dotPos + 1);
+                        if (strlen($decPart) > 3) {
+                            $errors[] = "Dòng {$rowNum}: Số lượng chỉ cho phép tối đa 3 chữ số thập phân.";
+                        }
+                    }
+                }
+            }
+
+            // Kiểm tra đơn giá
+            if ($rawPrice === '' || !is_numeric($rawPrice)) {
+                $errors[] = "Dòng {$rowNum}: Đơn giá không hợp lệ hoặc chưa được điền.";
+            } else {
+                $price = (float)$rawPrice;
+                if ($price < 0) {
+                    $errors[] = "Dòng {$rowNum}: Đơn giá không được âm.";
+                } elseif ($price > 1000000000) {
+                    $errors[] = "Dòng {$rowNum}: Đơn giá không được vượt quá 1.000.000.000 đ.";
+                }
+            }
+
+            if (!empty($ingId) && isset($ingredientMap[$ingId]) && is_numeric($rawQty) && (float)$rawQty > 0 && is_numeric($rawPrice) && (float)$rawPrice >= 0) {
+                $validItems[] = [
+                    'ingredient_id' => (int)$ingId,
+                    'qty' => (float)$rawQty,
+                    'unit_price' => (float)$rawPrice
+                ];
+                $hasAnyValidRow = true;
+            }
+        }
+
+        if (!$hasAnyValidRow && empty($errors)) {
+            $errors[] = 'Vui lòng nhập ít nhất một dòng nguyên liệu hợp lệ với số lượng lớn hơn 0.';
+        }
+
+        return [
+            'errors' => $errors,
+            'items' => $validItems
+        ];
     }
 
     public function store()
@@ -85,51 +254,85 @@ class InventoryReceiptController extends Controller
         if (!$user) return;
 
         $data = $this->getPost();
-        $required = ['receipt_date'];
-        $errors = $this->validateRequired($data, $required);
+
+        // Validate toàn diện
+        $validation = $this->validateReceiptData($data);
+        $errors = $validation['errors'];
+        $validItems = $validation['items'];
+
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
-            $this->redirect('inventory_receipt/create');
-            return;
-        }
-
-        $ingredientIds = $data['ingredient_id'] ?? [];
-        $qtys = $data['qty'] ?? [];
-        $unitPrices = $data['unit_price'] ?? [];
-        $validItems = [];
-        for ($i = 0; $i < count($ingredientIds); $i++) {
-            $ing = $ingredientIds[$i];
-            $q = isset($qtys[$i]) ? (float)$qtys[$i] : 0;
-            $p = isset($unitPrices[$i]) ? (float)$unitPrices[$i] : 0;
-            if (!empty($ing) && $q > 0) {
-                $validItems[] = ['ingredient_id' => $ing, 'qty' => $q, 'unit_price' => $p];
+            if ($this->isAjax()) {
+                $this->json([
+                    'success' => false,
+                    'message' => implode(' | ', $errors),
+                    'errors' => $errors
+                ], 422);
+                return;
             }
-        }
-        if (empty($validItems)) {
-            setFlash('error', 'Vui lòng thêm ít nhất một nguyên liệu hợp lệ');
+
+            $_SESSION['old_input'] = $data;
+            $_SESSION['form_errors'] = $errors;
+            setFlash('error', 'Có ' . count($errors) . ' lỗi cần kiểm tra lại:<br>• ' . implode('<br>• ', $errors));
             $this->redirect('inventory_receipt/create');
             return;
         }
 
-        $receipt = [
-            'created_by' => $user['id'] ?? null,
-            'supplier' => $data['supplier'] ?? null,
-            'receipt_date' => $data['receipt_date'],
-            'status' => 'pending',
-            'note' => $data['note'] ?? null
-        ];
-
-        $receiptId = $this->model->insert($receipt);
-
+        // Thực hiện lưu vào cơ sở dữ liệu với Transaction
         $db = getDB();
-        $stmt = $db->prepare('INSERT INTO inventory_receipt_detail (receipt_id, ingredient_id, qty, unit_price) VALUES (?, ?, ?, ?)');
+        $db->beginTransaction();
 
-        foreach ($validItems as $item) {
-            $stmt->execute([$receiptId, $item['ingredient_id'], $item['qty'], $item['unit_price']]);
+        try {
+            $receipt = [
+                'created_by' => $user['id'] ?? null,
+                'supplier' => !empty(trim($data['supplier'] ?? '')) ? trim($data['supplier']) : null,
+                'receipt_date' => $data['receipt_date'],
+                'status' => 'pending',
+                'note' => !empty(trim($data['note'] ?? '')) ? trim($data['note']) : null
+            ];
+
+            $receiptId = $this->model->insert($receipt);
+
+            if (!$receiptId) {
+                throw new Exception("Không thể khởi tạo bản ghi phiếu nhập kho.");
+            }
+
+            $stmt = $db->prepare('INSERT INTO inventory_receipt_detail (receipt_id, ingredient_id, qty, unit_price) VALUES (?, ?, ?, ?)');
+
+            foreach ($validItems as $item) {
+                $stmt->execute([$receiptId, $item['ingredient_id'], $item['qty'], $item['unit_price']]);
+            }
+
+            $db->commit();
+
+            logAudit('create', 'inventory_receipt', "Tạo phiếu nhập kho #{$receiptId} thành công");
+
+            if ($this->isAjax()) {
+                $this->json([
+                    'success' => true,
+                    'message' => "Tạo phiếu nhập kho #{$receiptId} thành công",
+                    'receipt_id' => $receiptId
+                ]);
+                return;
+            }
+
+            setFlash('success', "Tạo phiếu nhập kho #{$receiptId} thành công (Trạng thái: Chờ duyệt)");
+            $this->redirect('inventory_receipt');
+        } catch (Exception $e) {
+            $db->rollBack();
+            error_log("Lỗi tạo phiếu nhập kho: " . $e->getMessage());
+
+            if ($this->isAjax()) {
+                $this->json([
+                    'success' => false,
+                    'message' => 'Lỗi hệ thống khi tạo phiếu nhập: ' . $e->getMessage()
+                ], 500);
+                return;
+            }
+
+            $_SESSION['old_input'] = $data;
+            setFlash('error', 'Có lỗi xảy ra trong quá trình lưu dữ liệu: ' . $e->getMessage());
+            $this->redirect('inventory_receipt/create');
         }
-
-        setFlash('success', 'Tạo phiếu nhập kho thành công');
-        $this->redirect('inventory_receipt');
     }
 
     public function edit($id = null)

@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo Kiểm thử Tự động — Tạo Phiếu Nhập Kho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .header-box { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .metric-card { background: white; border-radius: 10px; padding: 1.25rem; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .table-responsive { background: white; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); padding: 1rem; }
+        th { background-color: #1e3a8a !important; color: white !important; font-size: 0.9rem; }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container-fluid">
+        <div class="header-box shadow">
+            <h1 class="h2 fw-bold mb-1">Báo Cáo Kiểm Thử Tự Động Playwright</h1>
+            <p class="mb-0 fs-5 opacity-75">Chức năng: Tạo phiếu nhập kho (Inventory Receipt Create) — PHP Restaurant</p>
+            <hr class="my-3 opacity-25">
+            <div class="d-flex flex-wrap gap-4 small">
+                <div><strong>Ngày chạy:</strong> 26/08/2026 02:16</div>
+                <div><strong>Người / Công cụ:</strong> Playwright (Chromium)</div>
+                <div><strong>Môi trường:</strong> Chromium / Windows Localhost</div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="metric-card text-center border-start border-primary border-4">
+                    <div class="text-muted small text-uppercase fw-bold">Tổng số Test Cases</div>
+                    <div class="fs-2 fw-bold text-primary">73</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card text-center border-start border-success border-4">
+                    <div class="text-muted small text-uppercase fw-bold">Passed</div>
+                    <div class="fs-2 fw-bold text-success">73</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card text-center border-start border-danger border-4">
+                    <div class="text-muted small text-uppercase fw-bold">Failed</div>
+                    <div class="fs-2 fw-bold text-danger">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card text-center border-start border-info border-4">
+                    <div class="text-muted small text-uppercase fw-bold">Tỷ lệ thành công</div>
+                    <div class="fs-2 fw-bold text-info">100.0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-white fw-bold py-3">Bảng tổng hợp theo nhóm kiểm thử</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nhóm kiểm thử (Category)</th>
+                                <th class="text-center">Số Test Cases</th>
+                                <th class="text-center">Pass</th>
+                                <th class="text-center">Fail</th>
+                                <th class="text-center">Tỷ lệ đạt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        <tr>
+            <td class="fw-semibold">UI Display</td>
+            <td class="text-center">8</td>
+            <td class="text-center text-success fw-bold">8</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Access Control</td>
+            <td class="text-center">7</td>
+            <td class="text-center text-success fw-bold">7</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Validation - Supplier</td>
+            <td class="text-center">7</td>
+            <td class="text-center text-success fw-bold">7</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Validation - Date</td>
+            <td class="text-center">7</td>
+            <td class="text-center text-success fw-bold">7</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Validation - Note</td>
+            <td class="text-center">5</td>
+            <td class="text-center text-success fw-bold">5</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Detail - Ingredient</td>
+            <td class="text-center">6</td>
+            <td class="text-center text-success fw-bold">6</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Detail - Quantity</td>
+            <td class="text-center">8</td>
+            <td class="text-center text-success fw-bold">8</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Detail - Price</td>
+            <td class="text-center">7</td>
+            <td class="text-center text-success fw-bold">7</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Dynamic & Calculations</td>
+            <td class="text-center">7</td>
+            <td class="text-center text-success fw-bold">7</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Submission & State</td>
+            <td class="text-center">8</td>
+            <td class="text-center text-success fw-bold">8</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    
+        <tr>
+            <td class="fw-semibold">Security & Edge Cases</td>
+            <td class="text-center">3</td>
+            <td class="text-center text-success fw-bold">3</td>
+            <td class="text-center text-danger fw-bold">0</td>
+            <td class="text-center">100.0%</td>
+        </tr>
+    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                <span>Chi tiết kết quả thực hiện 73 Test Cases</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th style="width: 140px;">Category</th>
+                                <th style="width: 220px;">Tên Test Case</th>
+                                <th>Các bước thực hiện</th>
+                                <th style="width: 160px;">Dữ liệu test</th>
+                                <th>Kết quả mong đợi</th>
+                                <th style="width: 80px;">Ưu tiên</th>
+                                <th>Kết quả thực tế</th>
+                                <th style="width: 80px;">Kết quả</th>
+                                <th style="width: 150px;">Ảnh chụp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        <tr class="">
+            <td class="text-center fw-bold">1</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Hiển thị đúng tiêu đề màn hình và mô tả trang</td>
+            <td><small style="white-space: pre-line;">1. Đăng nhập Admin.
+2. Mở URL /inventory_receipt/create.
+3. Quan sát tiêu đề h1.</small></td>
+            <td><code>Role: Admin</code></td>
+            <td><small>Tiêu đề trang có "Tạo phiếu nhập kho" và mô tả ngắn.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Tiêu đề thực tế: ' Tạo phiếu nhập kho'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">001_TC01_UI_man_hinh_tao_phieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">2</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Hiển thị đầy đủ các trường thông tin chung (NCC, Ngày nhập, Ghi chú)</td>
+            <td><small style="white-space: pre-line;">1. Quan sát phần 'Thông tin phiếu nhập'.
+2. Kiểm tra sự tồn tại của 3 input: supplier, receipt_date, note.</small></td>
+            <td><code>N/A</code></td>
+            <td><small>Có đủ 3 trường: Nhà cung cấp, Ngày nhập, Ghi chú.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>supplier=True, date=True, note=True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">001_TC01_UI_man_hinh_tao_phieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">3</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Trường Ngày nhập mặc định là ngày hiện tại (YYYY-MM-DD)</td>
+            <td><small style="white-space: pre-line;">1. Mở form tạo mới.
+2. Lấy giá trị trường receipt_date.</small></td>
+            <td><code>Ngày hiện tại: 2026-08-26</code></td>
+            <td><small>Giá trị mặc định bằng 2026-08-26.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Giá trị thực tế: '2026-08-26'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">001_TC01_UI_man_hinh_tao_phieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">4</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Hiển thị đầy đủ các cột trong bảng chi tiết nguyên liệu</td>
+            <td><small style="white-space: pre-line;">1. Quan sát bảng Chi tiết nguyên liệu.
+2. Kiểm tra tên các cột.</small></td>
+            <td><code>N/A</code></td>
+            <td><small>Đủ các cột: Nguyên liệu, Số lượng, Đơn giá, Thành tiền, Xóa.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Có đủ các cột tiêu đề: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">002_TC04_bang_chi_tiet_nguyen_lieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">5</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Hiển thị dropdown danh sách nguyên liệu lấy từ cơ sở dữ liệu</td>
+            <td><small style="white-space: pre-line;">1. Quan sát thẻ select nguyên liệu.
+2. Đếm số lượng option có sẵn.</small></td>
+            <td><code>Database: bảng ingredient</code></td>
+            <td><small>Dropdown chứa option mặc định và danh sách các nguyên liệu từ DB.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Số lượng options: 28</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">002_TC04_bang_chi_tiet_nguyen_lieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">6</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Hiển thị ô Tổng cộng giá trị mặc định là 0 đ và số mục</td>
+            <td><small style="white-space: pre-line;">1. Quan sát khung Tổng tiền dưới form.</small></td>
+            <td><code>N/A</code></td>
+            <td><small>Tổng cộng hiển thị '0 đ' và số mục khớp số dòng.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>Tổng cộng: '0 đ', Số mục: '1 mục'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">002_TC04_bang_chi_tiet_nguyen_lieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">7</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Hiển thị đầy đủ các nút chức năng (Thêm dòng, Tạo phiếu nhập, Hủy)</td>
+            <td><small style="white-space: pre-line;">1. Kiểm tra sự tồn tại của 3 nút thao tác chính trên form.</small></td>
+            <td><code>N/A</code></td>
+            <td><small>Có đủ 3 nút: Thêm dòng (#add-item), Tạo phiếu nhập (#btnSubmitReceipt), Hủy (#btnCancel).</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>add=True, submit=True, cancel=True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">002_TC04_bang_chi_tiet_nguyen_lieu.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">8</td>
+            <td><span class="badge bg-secondary">UI Display</span></td>
+            <td class="fw-semibold">Nhấn nút 'Quay lại' hoặc 'Hủy' điều hướng về trang danh sách phiếu nhập</td>
+            <td><small style="white-space: pre-line;">1. Tại trang create, nhấn nút 'Hủy' / 'Quay lại'.
+2. Quan sát URL.</small></td>
+            <td><code>URL: /inventory_receipt/create</code></td>
+            <td><small>Chuyển hướng về /inventory_receipt thành công.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>URL sau khi nhấn: http://localhost/php-restaurant-main-main/inventory_receipt</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">003_TC08_nut_quay_lai.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">9</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Quản trị viên (Admin) truy cập thành công màn hình Tạo phiếu nhập</td>
+            <td><small style="white-space: pre-line;">1. Đăng nhập Admin.
+2. Truy cập /inventory_receipt/create.</small></td>
+            <td><code>Role: Admin</code></td>
+            <td><small>Mở thành công form tạo phiếu nhập.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>URL=http://localhost/php-restaurant-main-main/inventory_receipt/create, Form exists=True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">004_TC09_admin_truy_cap.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">10</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Quản lý (Manager) truy cập thành công màn hình Tạo phiếu nhập</td>
+            <td><small style="white-space: pre-line;">1. Đăng nhập Manager.
+2. Truy cập /inventory_receipt/create.</small></td>
+            <td><code>Role: Manager</code></td>
+            <td><small>Mở thành công form tạo phiếu nhập.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>URL=http://localhost/php-restaurant-main-main/inventory_receipt/create, Form exists=True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">005_TC10_manager_truy_cap.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">11</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Nhân viên (Staff / User) không thể truy cập màn hình Tạo phiếu nhập</td>
+            <td><small style="white-space: pre-line;">1. Đăng nhập Staff.
+2. Nhập URL /inventory_receipt/create.</small></td>
+            <td><code>Role: Staff (User)</code></td>
+            <td><small>Bị chặn truy cập, chuyển hướng về Dashboard hoặc thông báo không đủ quyền.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>URL=http://localhost/php-restaurant-main-main/dashboard, Denied text present=True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">006_TC11_staff_bi_chan.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">12</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Thu ngân (Cashier) không thể truy cập màn hình Tạo phiếu nhập</td>
+            <td><small style="white-space: pre-line;">1. Đăng nhập Cashier.
+2. Nhập URL /inventory_receipt/create.</small></td>
+            <td><code>Role: Cashier</code></td>
+            <td><small>Hệ thống từ chối quyền truy cập.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>URL=http://localhost/php-restaurant-main-main/dashboard</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">007_TC12_cashier_bi_chan.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">13</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Khách chưa đăng nhập không thể truy cập màn hình Tạo phiếu nhập</td>
+            <td><small style="white-space: pre-line;">1. Mở phiên ẩn danh / chưa login.
+2. Truy cập /inventory_receipt/create.</small></td>
+            <td><code>Role: Guest</code></td>
+            <td><small>Tự động chuyển hướng về trang Đăng nhập (auth/login).</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>URL thực tế: http://localhost/php-restaurant-main-main/auth/login</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">008_TC13_guest_redirect_login.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">14</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Nhân viên gọi trực tiếp POST API /inventory_receipt/store bị chặn quyền</td>
+            <td><small style="white-space: pre-line;">1. Đăng nhập Staff.
+2. Gửi request POST tới /inventory_receipt/store.</small></td>
+            <td><code>Actor: Staff / Target: POST /store</code></td>
+            <td><small>Server từ chối hoặc redirect về dashboard, không lưu dữ liệu.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>HTTP status: 200, redirected: http://localhost/php-restaurant-main-main/dashboard</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">009_TC14_staff_post_api_blocked.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">15</td>
+            <td><span class="badge bg-secondary">Access Control</span></td>
+            <td class="fw-semibold">Người dùng chưa đăng nhập gọi POST API /inventory_receipt/store bị chặn</td>
+            <td><small style="white-space: pre-line;">1. Gửi request POST /inventory_receipt/store không có JWT cookie.</small></td>
+            <td><code>Actor: Guest</code></td>
+            <td><small>Bị từ chối hoặc chuyển hướng về auth/login.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>HTTP status: 200</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">008_TC13_guest_redirect_login.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">16</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Để trống trường Nhà cung cấp (Trường tùy chọn - Cho phép để trống)</td>
+            <td><small style="white-space: pre-line;">1. Nhập form hợp lệ, để trống ô Nhà cung cấp.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Supplier: [Empty]</code></td>
+            <td><small>Tạo phiếu nhập thành công, trường supplier nhận giá trị NULL/rỗng.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Flash: OK, URL=http://localhost/php-restaurant-main-main/inventory_receipt</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">010_TC16_supplier_empty.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">17</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Nhập tên Nhà cung cấp hợp lệ (2 - 100 ký tự văn bản chuẩn)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Nhà cung cấp: 'Công ty Thực phẩm Sạch TEST_ABC'.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Supplier: 'Công ty Thực phẩm Sạch TEST_ABC'</code></td>
+            <td><small>Tạo phiếu nhập thành công.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Kết quả lưu: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">011_TC17_supplier_valid.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">18</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Nhập Nhà cung cấp chỉ chứa toàn khoảng trắng</td>
+            <td><small style="white-space: pre-line;">1. Nhập 5 dấu cách vào ô Nhà cung cấp.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Supplier: '     '</code></td>
+            <td><small>Hệ thống báo lỗi 'Tên nhà cung cấp không được chỉ chứa khoảng trắng'.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Phát hiện lỗi khoảng trắng: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">012_TC18_supplier_all_spaces.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">19</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Nhập tên Nhà cung cấp quá ngắn (1 ký tự)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Supplier = 'A'.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Supplier: 'A' (1 char)</code></td>
+            <td><small>Báo lỗi 'Tên nhà cung cấp phải có tối thiểu 2 ký tự'.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Báo lỗi tối thiểu 2 ký tự: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">013_TC19_supplier_1_char.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">20</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Nhập tên Nhà cung cấp đạt giá trị biên tối đa (100 ký tự)</td>
+            <td><small style="white-space: pre-line;">1. Nhập chuỗi 100 ký tự vào ô Nhà cung cấp.
+2. Submit form.</small></td>
+            <td><code>Supplier length: 100 chars</code></td>
+            <td><small>Tạo phiếu nhập thành công không phát sinh lỗi.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">014_TC20_supplier_100_chars.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">21</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Nhập tên Nhà cung cấp vượt quá 100 ký tự (> 100 chars)</td>
+            <td><small style="white-space: pre-line;">1. Nhập chuỗi 124 ký tự vào ô Nhà cung cấp.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Supplier length: 124 chars</code></td>
+            <td><small>Báo lỗi 'Tên nhà cung cấp không được vượt quá 100 ký tự'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi độ dài vượt quá: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">015_TC21_supplier_over_100_chars.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">22</td>
+            <td><span class="badge bg-secondary">Validation - Supplier</span></td>
+            <td class="fw-semibold">Nhập Nhà cung cấp chứa ký tự đặc biệt hợp lệ (SĐT, dấu ngoặc, Unicode tiếng Việt)</td>
+            <td><small style="white-space: pre-line;">1. Nhập 'TEST_Đại lý Nông Sản Sạch (SĐT: 0987.654.321)'.
+2. Submit form.</small></td>
+            <td><code>Supplier: 'TEST_Đại lý Nông Sản Sạch (SĐT: 0987.654.321)'</code></td>
+            <td><small>Lưu thành công, chuỗi hiển thị đúng nguyên vẹn.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">016_TC22_supplier_special_chars.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">23</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Bỏ trống trường Ngày nhập kho</td>
+            <td><small style="white-space: pre-line;">1. Xóa rỗng trường Ngày nhập (receipt_date).
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Receipt Date: [Empty]</code></td>
+            <td><small>Báo lỗi 'Ngày nhập kho là bắt buộc, không được để trống'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi ngày rỗng: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">017_TC23_receipt_date_empty.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">24</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Nhập Ngày nhập kho là ngày hiện tại (Hôm nay)</td>
+            <td><small style="white-space: pre-line;">1. Nhập ngày hôm nay vào ô Ngày nhập.
+2. Submit form.</small></td>
+            <td><code>Date: 2026-08-26</code></td>
+            <td><small>Tạo phiếu nhập thành công.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">018_TC24_receipt_date_today.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">25</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Nhập Ngày nhập kho là một ngày trong quá khứ hợp lệ</td>
+            <td><small style="white-space: pre-line;">1. Nhập ngày 2 ngày trước vào ô Ngày nhập.
+2. Submit form.</small></td>
+            <td><code>Date: 2026-08-24</code></td>
+            <td><small>Tạo phiếu nhập thành công.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">019_TC25_receipt_date_past.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">26</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Nhập Ngày nhập kho là ngày trong tương lai (> Hôm nay)</td>
+            <td><small style="white-space: pre-line;">1. Nhập ngày 2 ngày sau vào ô Ngày nhập.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Date: 2026-08-28 (Future)</code></td>
+            <td><small>Báo lỗi 'Ngày nhập kho không được lớn hơn ngày hiện tại'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi ngày tương lai: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">020_TC26_receipt_date_future.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">27</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Nhập Ngày nhập kho quá khứ quá xa (Trước ngày 01/01/2020)</td>
+            <td><small style="white-space: pre-line;">1. Nhập ngày 15/05/2018 vào ô Ngày nhập.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Date: '2018-05-15'</code></td>
+            <td><small>Báo lỗi 'Ngày nhập kho không được nhỏ hơn ngày 01/01/2020'.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Bắt lỗi ngày quá cũ: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">021_TC27_receipt_date_too_old.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">28</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Gửi dữ liệu Ngày nhập sai định dạng YYYY-MM-DD qua API</td>
+            <td><small style="white-space: pre-line;">1. Gửi request POST /store với receipt_date = 'invalid-date-format'.</small></td>
+            <td><code>Date: 'invalid-date-format'</code></td>
+            <td><small>Server bắt lỗi định dạng ngày không hợp lệ, từ chối lưu.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>HTTP status: 422</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">021_TC27_receipt_date_too_old.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">29</td>
+            <td><span class="badge bg-secondary">Validation - Date</span></td>
+            <td class="fw-semibold">Kiểm tra xử lý ngày nhuận (29/02/2024 hợp lệ vs 29/02/2023 không nhuận)</td>
+            <td><small style="white-space: pre-line;">1. POST ngày 29/02/2024 (năm nhuận) -> Pass.
+2. POST ngày 29/02/2023 (không nhuận) -> Bắt lỗi.</small></td>
+            <td><code>Valid: 2024-02-29 / Invalid: 2023-02-29</code></td>
+            <td><small>Chấp nhận ngày nhuận thực tế, từ chối ngày không tồn tại.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Nhuận 2024 HTTP=200; Không nhuận 2023 HTTP=422</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">021_TC27_receipt_date_too_old.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">30</td>
+            <td><span class="badge bg-secondary">Validation - Note</span></td>
+            <td class="fw-semibold">Để trống trường Ghi chú (Trường tùy chọn - Cho phép rỗng)</td>
+            <td><small style="white-space: pre-line;">1. Để trống ô Ghi chú.
+2. Submit form.</small></td>
+            <td><code>Note: [Empty]</code></td>
+            <td><small>Tạo phiếu nhập thành công, note lưu NULL.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">022_TC30_note_empty.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">31</td>
+            <td><span class="badge bg-secondary">Validation - Note</span></td>
+            <td class="fw-semibold">Nhập Ghi chú ngắn hợp lệ</td>
+            <td><small style="white-space: pre-line;">1. Nhập văn bản mô tả phiếu vào ô Ghi chú.
+2. Submit form.</small></td>
+            <td><code>Note: 'TEST_Ghi chú nhập hàng ca sáng...'</code></td>
+            <td><small>Lưu thành công phiếu nhập.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">023_TC31_note_valid.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">32</td>
+            <td><span class="badge bg-secondary">Validation - Note</span></td>
+            <td class="fw-semibold">Nhập Ghi chú đạt độ dài tối đa biên 500 ký tự</td>
+            <td><small style="white-space: pre-line;">1. Nhập chuỗi 500 ký tự vào ô Ghi chú.
+2. Submit form.</small></td>
+            <td><code>Note length: 500 chars</code></td>
+            <td><small>Tạo phiếu nhập thành công không lỗi.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">024_TC32_note_500_chars.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">33</td>
+            <td><span class="badge bg-secondary">Validation - Note</span></td>
+            <td class="fw-semibold">Nhập Ghi chú vượt quá 500 ký tự (> 500 chars)</td>
+            <td><small style="white-space: pre-line;">1. Nhập chuỗi 600 ký tự vào ô Ghi chú.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Note length: 600 chars</code></td>
+            <td><small>Báo lỗi 'Ghi chú không được vượt quá 500 ký tự'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi độ dài note: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">025_TC33_note_over_500_chars.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">34</td>
+            <td><span class="badge bg-secondary">Validation - Note</span></td>
+            <td class="fw-semibold">Nhập Ghi chú nhiều dòng xuống dòng và ký tự tiếng Việt</td>
+            <td><small style="white-space: pre-line;">1. Nhập ghi chú có ký tự xuống dòng (\n).
+2. Submit form.</small></td>
+            <td><code>Note: 3 dòng text</code></td>
+            <td><small>Lưu thành công và giữ nguyên định dạng xuống dòng.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">026_TC34_note_multiline.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">35</td>
+            <td><span class="badge bg-secondary">Detail - Ingredient</span></td>
+            <td class="fw-semibold">Không chọn nguyên liệu trên dòng (để dropdown ở option mặc định)</td>
+            <td><small style="white-space: pre-line;">1. Để select nguyên liệu rỗng value=''.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Ingredient ID: [Empty]</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Vui lòng chọn nguyên liệu'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi chưa chọn NL: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">027_TC35_ingredient_empty_select.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">36</td>
+            <td><span class="badge bg-secondary">Detail - Ingredient</span></td>
+            <td class="fw-semibold">Chọn nguyên liệu hợp lệ từ dropdown</td>
+            <td><small style="white-space: pre-line;">1. Chọn option thứ 2 trong dropdown nguyên liệu.
+2. Kiểm tra value của select.</small></td>
+            <td><code>Selected ID: 19</code></td>
+            <td><small>Dropdown nhận đúng ID nguyên liệu tương ứng.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>ID được chọn: '19'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">028_TC36_ingredient_valid_selected.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">37</td>
+            <td><span class="badge bg-secondary">Detail - Ingredient</span></td>
+            <td class="fw-semibold">Gửi ID nguyên liệu không tồn tại trong cơ sở dữ liệu (ID: 999999)</td>
+            <td><small style="white-space: pre-line;">1. Gửi POST /store với ingredient_id = '999999'.</small></td>
+            <td><code>Ingredient ID: 999999</code></td>
+            <td><small>Báo lỗi 'Nguyên liệu không tồn tại trong hệ thống'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>HTTP status: 422</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">028_TC36_ingredient_valid_selected.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">38</td>
+            <td><span class="badge bg-secondary">Detail - Ingredient</span></td>
+            <td class="fw-semibold">Chọn cùng một nguyên liệu trên nhiều dòng (Phát hiện trùng lặp nguyên liệu)</td>
+            <td><small style="white-space: pre-line;">1. Dòng 1 chọn nguyên liệu A.
+2. Thêm Dòng 2 và cũng chọn nguyên liệu A.
+3. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Row 1: ID 19 | Row 2: ID 19</code></td>
+            <td><small>Hệ thống highlight đỏ dòng trùng và báo lỗi 'Nguyên liệu bị trùng lặp với dòng trước đó'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi trùng lặp: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">029_TC38_duplicate_ingredient_rows.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">39</td>
+            <td><span class="badge bg-secondary">Detail - Ingredient</span></td>
+            <td class="fw-semibold">Tự động điền Đơn giá mặc định (purchase_price) khi chọn nguyên liệu</td>
+            <td><small style="white-space: pre-line;">1. Chọn nguyên liệu trên dropdown.
+2. Quan sát ô Đơn giá.</small></td>
+            <td><code>Ingredient selection change event</code></td>
+            <td><small>Ô Đơn giá tự động được điền giá mua gần nhất của nguyên liệu.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Đơn giá tự điền: '25000.00'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">030_TC39_auto_fill_price.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">40</td>
+            <td><span class="badge bg-secondary">Detail - Ingredient</span></td>
+            <td class="fw-semibold">Đổi sang nguyên liệu khác trên cùng một dòng cập nhật lại đơn giá</td>
+            <td><small style="white-space: pre-line;">1. Đổi sang nguyên liệu thứ 3.
+2. Quan sát đơn giá.</small></td>
+            <td><code>Switch to ingredient index 2</code></td>
+            <td><small>Đơn giá cập nhật theo nguyên liệu mới.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>Đơn giá mới: '10000.00'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">031_TC40_change_ingredient_updates_price.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">41</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Bỏ trống ô Số lượng trên dòng nguyên liệu</td>
+            <td><small style="white-space: pre-line;">1. Xóa rỗng ô Số lượng.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Qty: [Empty]</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Số lượng không hợp lệ hoặc chưa được điền'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi số lượng rỗng: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">032_TC41_qty_empty.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">42</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng = 0 trên dòng nguyên liệu</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 0.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Qty: 0</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Số lượng nhập phải lớn hơn 0'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi số lượng 0: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">033_TC42_qty_zero.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">43</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng là số âm (< 0)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = -10.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Qty: -10</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Số lượng nhập phải lớn hơn 0'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi số âm: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">034_TC43_qty_negative.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">44</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng là số nguyên dương hợp lệ (VD: 25)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 25.
+2. Submit form.</small></td>
+            <td><code>Qty: 25</code></td>
+            <td><small>Tạo phiếu nhập thành công.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">035_TC44_qty_valid_int.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">45</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng là số thập phân 1 chữ số lẻ (VD: 2.5 kg)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 2.5.
+2. Submit form.</small></td>
+            <td><code>Qty: 2.5</code></td>
+            <td><small>Tạo phiếu nhập thành công, lưu đúng 2.5 vào DB.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">036_TC45_qty_valid_decimal.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">46</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng đạt tối đa 3 chữ số thập phân (VD: 0.125 kg)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 0.125.
+2. Submit form.</small></td>
+            <td><code>Qty: 0.125</code></td>
+            <td><small>Tạo phiếu nhập thành công (khớp định dạng DECIMAL(10,3)).</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">037_TC46_qty_3_decimals.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">47</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng có hơn 3 chữ số thập phân (VD: 1.2345)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 1.2345 (4 số lẻ).
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Qty: 1.2345</code></td>
+            <td><small>Báo lỗi 'Số lượng chỉ cho phép tối đa 3 chữ số thập phân'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi quá 3 số lẻ: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">038_TC47_qty_over_3_decimals.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">48</td>
+            <td><span class="badge bg-secondary">Detail - Quantity</span></td>
+            <td class="fw-semibold">Nhập Số lượng vượt quá ngưỡng tối đa (> 99.999)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 100000.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Qty: 100000</code></td>
+            <td><small>Báo lỗi 'Số lượng nhập không được vượt quá 99.999'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi vượt max qty: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">039_TC48_qty_over_max.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">49</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Bỏ trống ô Đơn giá trên dòng nguyên liệu</td>
+            <td><small style="white-space: pre-line;">1. Xóa rỗng ô Đơn giá.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Unit Price: [Empty]</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Đơn giá không hợp lệ hoặc chưa được điền'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi đơn giá rỗng: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">040_TC49_price_empty.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">50</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Nhập Đơn giá là số âm (< 0)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Đơn giá = -5000.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Unit Price: -5000</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Đơn giá không được âm'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi giá âm: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">041_TC50_price_negative.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">51</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Nhập Đơn giá = 0 đ (Hàng tặng kèm / nguyên liệu dùng thử)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Đơn giá = 0.
+2. Submit form.</small></td>
+            <td><code>Unit Price: 0</code></td>
+            <td><small>Hệ thống chấp nhận đơn giá 0 đ và tạo phiếu thành công.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">042_TC51_price_zero.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">52</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Nhập Đơn giá là số dương chuẩn (VD: 50.000 đ)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Đơn giá = 50000.
+2. Submit form.</small></td>
+            <td><code>Unit Price: 50000</code></td>
+            <td><small>Tạo phiếu nhập thành công.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">043_TC52_price_valid_positive.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">53</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Nhập Đơn giá có phần thập phân (VD: 15.500,5 đ)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Đơn giá = 15500.5.
+2. Submit form.</small></td>
+            <td><code>Unit Price: 15500.5</code></td>
+            <td><small>Tạo phiếu nhập thành công.</small></td>
+            <td class="text-center"><span class="badge bg-info text-dark">Low</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">044_TC53_price_decimal.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">54</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Nhập Đơn giá vượt quá giới hạn tối đa (> 1.000.000.000 đ)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Đơn giá = 1000000001 (1 tỷ 1 đồng).
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Unit Price: 1000000001</code></td>
+            <td><small>Báo lỗi 'Dòng 1: Đơn giá không được vượt quá 1.000.000.000 đ'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi vượt max price: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">045_TC54_price_over_max.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">55</td>
+            <td><span class="badge bg-secondary">Detail - Price</span></td>
+            <td class="fw-semibold">Chỉnh sửa thủ công đơn giá khác với giá gợi ý mặc định</td>
+            <td><small style="white-space: pre-line;">1. Chọn NL, sửa đơn giá thành 99.000 đ.
+2. Submit form.</small></td>
+            <td><code>Unit Price: 99000 (Custom)</code></td>
+            <td><small>Lưu đúng đơn giá người dùng đã điều chỉnh.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Lưu thành công: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">046_TC55_price_custom_edit.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">56</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Nhấn nút 'Thêm dòng nguyên liệu' tăng thêm 1 dòng nhập</td>
+            <td><small style="white-space: pre-line;">1. Nhấn nút #add-item.
+2. Đếm số lượng class .receipt-row.</small></td>
+            <td><code>Action: Click #add-item</code></td>
+            <td><small>Số dòng tăng thêm 1 và hiển thị đầy đủ các trường.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Trước: 1, Sau: 2</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">047_TC56_add_row_click.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">57</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Nhấn nút 'Xóa dòng' (thùng rác) loại bỏ đúng dòng tương ứng</td>
+            <td><small style="white-space: pre-line;">1. Nhấn nút xóa trên dòng vừa thêm.
+2. Đếm lại số dòng.</small></td>
+            <td><code>Action: Click .remove-item</code></td>
+            <td><small>Dòng tương ứng bị xóa hoàn toàn khỏi DOM.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Số dòng sau xóa: 1</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">048_TC57_remove_row_click.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">58</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Thêm liên tiếp nhiều dòng nguyên liệu (5 dòng) giao diện ổn định</td>
+            <td><small style="white-space: pre-line;">1. Nhấn Thêm dòng 4 lần liên tiếp.
+2. Kiểm tra tổng số 5 dòng.</small></td>
+            <td><code>Action: 4 clicks on #add-item</code></td>
+            <td><small>Giao diện hiển thị đủ 5 dòng đều đặn, không vỡ layout.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Tổng số dòng: 5</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">049_TC58_add_5_rows.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">59</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Tự động tính Thành tiền = Số lượng * Đơn giá realtime khi nhập số lượng</td>
+            <td><small style="white-space: pre-line;">1. Nhập Số lượng = 4, Đơn giá = 25.000 đ.
+2. Quan sát ô Thành tiền của dòng.</small></td>
+            <td><code>Qty: 4, Price: 25000</code></td>
+            <td><small>Thành tiền tự động hiển thị '100.000 đ'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Thành tiền thực tế: '100.000 đ'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">050_TC59_calc_subtotal_on_qty.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">60</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Tự động tính lại Thành tiền khi thay đổi ô Đơn giá</td>
+            <td><small style="white-space: pre-line;">1. Sửa Đơn giá thành 50.000 đ (Số lượng vẫn = 4).
+2. Quan sát ô Thành tiền.</small></td>
+            <td><code>Qty: 4, New Price: 50000</code></td>
+            <td><small>Thành tiền tự động cập nhật lên '200.000 đ'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Thành tiền mới: '200.000 đ'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">051_TC60_calc_subtotal_on_price.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">61</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Tự động cập nhật Tổng cộng giá trị phiếu nhập bằng tổng tất cả các dòng</td>
+            <td><small style="white-space: pre-line;">1. Dòng 1: 200.000 đ. Dòng 2: 300.000 đ.
+2. Quan sát ô Tổng cộng (#receipt-total).</small></td>
+            <td><code>Row 1: 200k | Row 2: 300k</code></td>
+            <td><small>Tổng cộng hiển thị chính xác '500.000 đ'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Tổng cộng thực tế: '500.000 đ'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">052_TC61_calc_grand_total.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">62</td>
+            <td><span class="badge bg-secondary">Dynamic & Calculations</span></td>
+            <td class="fw-semibold">Định dạng tiền tệ VNĐ chuẩn có dấu chấm phân cách và ký hiệu 'đ'</td>
+            <td><small style="white-space: pre-line;">1. Quan sát cách hiển thị số tiền trên Thành tiền và Tổng cộng.</small></td>
+            <td><code>Value: 500000</code></td>
+            <td><small>Hiển thị định dạng tiền tệ Việt Nam (VD: '500.000 đ').</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Định dạng hiển thị: '500.000 đ'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">053_TC62_currency_format.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">63</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Submit form khi không có bất kỳ dòng nguyên liệu nào</td>
+            <td><small style="white-space: pre-line;">1. Xóa toàn bộ các dòng chi tiết.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Rows count: 0</code></td>
+            <td><small>Báo lỗi 'Phiếu nhập kho phải có ít nhất một dòng nguyên liệu'.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Bắt lỗi không có dòng: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">054_TC63_submit_zero_rows.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">64</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Submit form với đầy đủ dữ liệu hợp lệ (1 dòng nguyên liệu)</td>
+            <td><small style="white-space: pre-line;">1. Nhập Supplier, Date, Note, 1 dòng nguyên liệu hợp lệ.
+2. Nhấn Tạo phiếu nhập.</small></td>
+            <td><code>Valid 1 row data</code></td>
+            <td><small>Tạo phiếu nhập thành công (status: pending), chuyển hướng về danh sách.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>URL sau submit: http://localhost/php-restaurant-main-main/inventory_receipt</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">055_TC64_submit_valid_single_row.png, 056_TC64_after_submit_success.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">65</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Submit form với nhiều dòng nguyên liệu hợp lệ (3 dòng khác nhau)</td>
+            <td><small style="white-space: pre-line;">1. Thêm 3 dòng với 3 nguyên liệu khác nhau.
+2. Điền số lượng và đơn giá hợp lệ.
+3. Submit.</small></td>
+            <td><code>Valid 3 rows data</code></td>
+            <td><small>Lưu thành công toàn bộ phiếu và chi tiết 3 dòng vào DB.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Kết quả lưu 3 dòng: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">057_TC65_submit_3_valid_rows.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">66</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Hệ thống giữ lại toàn bộ dữ liệu đã nhập (Old Input) khi có lỗi validation</td>
+            <td><small style="white-space: pre-line;">1. Submit form chứa 1 trường lỗi (ngày trước 2020).
+2. Backend redirect về create.
+3. Quan sát các ô nhập liệu.</small></td>
+            <td><code>Supplier: 'TEST_OLD_SUPPLIER_RETAINED', Note: 'TEST_OLD_NOTE_RETAINED'</code></td>
+            <td><small>Các trường Nhà cung cấp, Ghi chú và các dòng nguyên liệu vẫn giữ nguyên dữ liệu đã nhập.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Supplier giữ lại: 'TEST_OLD_SUPPLIER_RETAINED', Note giữ lại: 'TEST_OLD_NOTE_RETAINED'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">058_TC66_old_input_retained.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">67</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Hiển thị danh sách thông báo lỗi chi tiết theo từng trường / từng dòng</td>
+            <td><small style="white-space: pre-line;">1. Nhập nhiều trường vi phạm đồng thời.
+2. Nhấn Tạo phiếu nhập.
+3. Quan sát khối alert thông báo lỗi.</small></td>
+            <td><code>4 vi phạm: Supplier, Date, Ingredient, Qty</code></td>
+            <td><small>Khung thông báo lỗi liệt kê chi tiết từng lỗi bằng danh sách gạch đầu dòng rõ ràng.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Số lượng thông báo lỗi chi tiết: 4</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">059_TC67_multiple_detailed_errors.png, 060_TC67_error_box_displayed.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">68</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Chống submit trùng lặp (Double Click) bằng cách disable nút và hiển thị spinner</td>
+            <td><small style="white-space: pre-line;">1. Nhấn nút Tạo phiếu nhập.
+2. Kiểm tra trạng thái disabled của nút ngay lập tức.</small></td>
+            <td><code>Action: Submit button click</code></td>
+            <td><small>Nút bị vô hiệu hóa (disabled = true) và hiển thị 'Đang lưu phiếu...'.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Disabled state: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">061_TC68_double_click_protection.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">69</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Mở form từ Quick Restock URL query params (?ingredient_id=1&qty=15)</td>
+            <td><small style="white-space: pre-line;">1. Truy cập URL kèm tham số: /inventory_receipt/create?ingredient_id=1&qty=15.
+2. Quan sát dòng đầu tiên.</small></td>
+            <td><code>Query: ingredient_id=1, qty=15</code></td>
+            <td><small>Tự động chọn đúng nguyên liệu ID 1 và điền số lượng 15.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Selected ID: '1', Qty: '15'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">062_TC69_quick_restock_params.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">70</td>
+            <td><span class="badge bg-secondary">Submission & State</span></td>
+            <td class="fw-semibold">Mở form tạo phiếu từ giỏ nhập hàng tự động (create_from_restock)</td>
+            <td><small style="white-space: pre-line;">1. Ghi restockCart vào sessionStorage.
+2. Truy cập /inventory_receipt/create_from_restock.
+3. Đếm số dòng.</small></td>
+            <td><code>sessionStorage: 2 items (ID 1: qty 8, ID 2: qty 12)</code></td>
+            <td><small>Tự động sinh ra 2 dòng nguyên liệu khớp với giỏ nhập hàng.</small></td>
+            <td class="text-center"><span class="badge bg-warning text-dark">Medium</span></td>
+            <td><small>Số dòng sinh ra: 2</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">063_TC70_create_from_restock_cart.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">71</td>
+            <td><span class="badge bg-secondary">Security & Edge Cases</span></td>
+            <td class="fw-semibold">Chống tấn công XSS Injection trong trường Nhà cung cấp và Ghi chú</td>
+            <td><small style="white-space: pre-line;">1. Nhập payload '<script>alert(1)</script>' vào supplier và note.
+2. Submit form và xem trang danh sách.</small></td>
+            <td><code>Payload: <script>alert('XSS_ATTACK')</script></code></td>
+            <td><small>Mã HTML/Script được escape an toàn (htmlspecialchars), không bị thực thi script.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>An toàn XSS: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">064_TC71_xss_injection_test.png, 065_TC71_after_xss_submit.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">72</td>
+            <td><span class="badge bg-secondary">Security & Edge Cases</span></td>
+            <td class="fw-semibold">Chống tấn công SQL Injection trong các trường dữ liệu văn bản</td>
+            <td><small style="white-space: pre-line;">1. Nhập payload SQL Injection vào các ô văn bản.
+2. Submit form.</small></td>
+            <td><code>Payload: TEST_SQLI' OR '1'='1' -- </code></td>
+            <td><small>Prepared Statement xử lý an toàn, lưu chính xác chuỗi mà không lỗi DB.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>Lưu an toàn: True</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">066_TC72_sqli_injection_test.png</small></td>
+        </tr>
+    
+        <tr class="">
+            <td class="text-center fw-bold">73</td>
+            <td><span class="badge bg-secondary">Security & Edge Cases</span></td>
+            <td class="fw-semibold">Kiểm tra tính toàn vẹn dữ liệu trong Database (bảng inventory_receipt & detail)</td>
+            <td><small style="white-space: pre-line;">1. Truy vấn trực tiếp DB kiểm tra bản ghi vừa tạo.
+2. Đối chiếu status và số lượng chi tiết detail.</small></td>
+            <td><code>Query DB: inventory_receipt + detail</code></td>
+            <td><small>Bản ghi lưu đúng status='pending' và đầy đủ các dòng detail liên kết khóa ngoại.</small></td>
+            <td class="text-center"><span class="badge bg-danger">High</span></td>
+            <td><small>DB Check result: 'pending|1'</small></td>
+            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small class="text-muted">067_TC73_db_data_integrity.png</small></td>
+        </tr>
+    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
