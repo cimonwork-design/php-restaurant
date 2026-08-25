@@ -146,6 +146,8 @@ def add_result(
         "date": TODAY,
         "tester": TESTER,
     })
+    tag = "[PASS]" if status == "Pass" else "[FAIL]"
+    print(f"  {tag} TC{tc_id:02d}: {name[:52]:<52}", flush=True)
 
 
 def pass_fail(ok: bool) -> str:
@@ -459,7 +461,7 @@ def export_html() -> Path:
 # ==============================================================================
 # HÀM THỰC THI TOÀN BỘ KIỂM THỬ (MAIN RUNNER)
 # ==============================================================================
-def run_all_tests():
+def run_all_tests(headless: bool = True, slow_mo: int = 0):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for old in OUT_DIR.glob("*.png"):
         old.unlink()
@@ -472,7 +474,7 @@ def run_all_tests():
     tomorrow_str = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=headless, slow_mo=slow_mo)
         context = browser.new_context(viewport={"width": 1440, "height": 900}, locale="vi-VN")
         page = context.new_page()
         page.set_default_timeout(15000)
@@ -1757,4 +1759,12 @@ def run_all_tests():
 
 
 if __name__ == "__main__":
-    run_all_tests()
+    is_headed = ("--headed" in sys.argv) or ("--visible" in sys.argv) or ("-v" in sys.argv)
+    slow_mo = 250 if is_headed else 0
+    for arg in sys.argv:
+        if arg.startswith("--slowmo="):
+            try:
+                slow_mo = int(arg.split("=")[1])
+            except ValueError:
+                pass
+    run_all_tests(headless=not is_headed, slow_mo=slow_mo)

@@ -1,17 +1,17 @@
 @echo off
 chcp 65001 > nul
 set PYTHONUNBUFFERED=1
-title Kiem Thu Tu Dong - Tao Phieu Nhap Kho (Headless Fast Mode)
+title Kiem Thu Tu Dong - Tao Phieu Nhap Kho (Headed Mode)
 
 echo ====================================================================
-echo   CHAY KIEM THU TU DONG - CHE DO CHAY NGAM SIEU TOC (HEADLESS)
+echo   CHAY KIEM THU TU DONG - HIEN THI TRINH DUYET TRUC QUAN (HEADED)
 echo ====================================================================
 echo.
-echo [*] Dang thuc thi 73 Test Cases trong background...
+echo [*] Dang khoi dong Chromium... Trinh duyet se tu dong mo len man hinh.
 echo [*] Tien trinh kiem thu se in truc tiep ben duoi:
 echo.
 
-"C:\Users\ducdu\AppData\Local\Programs\Python311\python.exe" -u "%~dp0playwright_inventory_receipt.py"
+"C:\Users\ducdu\AppData\Local\Programs\Python311\python.exe" -u "%~dp0playwright_inventory_receipt.py" --headed --slowmo=80
 
 echo.
 echo ====================================================================
