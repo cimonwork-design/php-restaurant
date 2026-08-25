@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class IngredientCategoryController extends Controller
 {
@@ -51,13 +52,18 @@ class IngredientCategoryController extends Controller
         $required = ['name'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('name_required'));
+            $this->redirect('ingredient_category/create');
+            return;
+        }
+        if (strlen($data['name']) > 100) {
+            setFlash('error', formMessage('category_length'));
             $this->redirect('ingredient_category/create');
             return;
         }
 
         if ($this->model->findByName($data['name'])) {
-            setFlash('error', 'Loáº¡i nguyÃªn liá»‡u Ä‘Ã£ tá»“n táº¡i');
+            setFlash('error', 'Tên danh mục đã tồn tại.');
             $this->redirect('ingredient_category/create');
             return;
         }
@@ -101,14 +107,19 @@ class IngredientCategoryController extends Controller
         $required = ['name'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('name_required'));
+            $this->redirect('ingredient_category/edit/' . $id);
+            return;
+        }
+        if (strlen($data['name']) > 100) {
+            setFlash('error', formMessage('category_length'));
             $this->redirect('ingredient_category/edit/' . $id);
             return;
         }
 
         $existing = $this->model->findByName($data['name']);
         if ($existing && $existing['id'] != $id) {
-            setFlash('error', 'Loáº¡i nguyÃªn liá»‡u Ä‘Ã£ tá»“n táº¡i');
+            setFlash('error', 'Tên danh mục đã tồn tại.');
             $this->redirect('ingredient_category/edit/' . $id);
             return;
         }

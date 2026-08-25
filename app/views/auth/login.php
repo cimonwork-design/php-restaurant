@@ -418,8 +418,18 @@
             const remember = document.getElementById('remember').checked;
 
             // Validate
-            if (!username || !password) {
-                showAlert('Vui lòng nhập đầy đủ thông tin đăng nhập');
+            if (!username) {
+                showAlert('Tên đăng nhập không được để trống.');
+                return;
+            }
+
+            if (!password) {
+                showAlert('Mật khẩu không được để trống.');
+                return;
+            }
+
+            if (!/^[A-Za-z0-9._-]+$/.test(username)) {
+                showAlert('Tên đăng nhập chỉ gồm chữ cái, chữ số, dấu chấm, gạch dưới và gạch ngang.');
                 return;
             }
 
@@ -435,13 +445,10 @@
             try {
                 const response = await fetch(`${BASE_URL}/auth/doLogin`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+                    body: new URLSearchParams({
                         username: username,
                         password: password,
-                        remember: remember
+                        remember: remember ? '1' : '0'
                     })
                 });
 

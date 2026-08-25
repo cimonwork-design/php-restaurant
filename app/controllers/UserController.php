@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class UserController extends Controller
 {
@@ -61,14 +62,35 @@ class UserController extends Controller
         $required = ['username', 'password', 'role'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('required'));
+            $this->redirect('user/create');
+            return;
+        }
+
+        if (!preg_match('/^[A-Za-z0-9._-]+$/', $data['username']) || strlen($data['username']) < 3 || strlen($data['username']) > 60) {
+            setFlash('error', formMessage('username_format'));
+            $this->redirect('user/create');
+            return;
+        }
+        if (strlen($data['password']) < 6) {
+            setFlash('error', formMessage('password_length'));
+            $this->redirect('user/create');
+            return;
+        }
+        if (strlen($data['fullname'] ?? '') > 100) {
+            setFlash('error', formMessage('fullname_length'));
+            $this->redirect('user/create');
+            return;
+        }
+        if (!in_array($data['role'], ['admin', 'manager', 'user'], true)) {
+            setFlash('error', formMessage('role_invalid'));
             $this->redirect('user/create');
             return;
         }
 
         // prevent duplicate username
         if ($this->model->findByUsername($data['username'])) {
-            setFlash('error', 'Username already exists');
+            setFlash('error', formMessage('username_exists'));
             $this->redirect('user/create');
             return;
         }
@@ -120,7 +142,28 @@ class UserController extends Controller
         $required = ['username', 'role'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('required'));
+            $this->redirect('user/edit/' . $id);
+            return;
+        }
+
+        if (!preg_match('/^[A-Za-z0-9._-]+$/', $data['username']) || strlen($data['username']) < 3 || strlen($data['username']) > 60) {
+            setFlash('error', formMessage('username_format'));
+            $this->redirect('user/edit/' . $id);
+            return;
+        }
+        if (!empty($data['password']) && strlen($data['password']) < 6) {
+            setFlash('error', formMessage('password_length'));
+            $this->redirect('user/edit/' . $id);
+            return;
+        }
+        if (strlen($data['fullname'] ?? '') > 100) {
+            setFlash('error', formMessage('fullname_length'));
+            $this->redirect('user/edit/' . $id);
+            return;
+        }
+        if (!in_array($data['role'], ['admin', 'manager', 'user'], true)) {
+            setFlash('error', formMessage('role_invalid'));
             $this->redirect('user/edit/' . $id);
             return;
         }
@@ -128,7 +171,7 @@ class UserController extends Controller
         // prevent duplicate username for other users
         $existing = $this->model->findByUsername($data['username']);
         if ($existing && $existing['id'] != $id) {
-            setFlash('error', 'Username already exists');
+            setFlash('error', formMessage('username_exists'));
             $this->redirect('user/edit/' . $id);
             return;
         }

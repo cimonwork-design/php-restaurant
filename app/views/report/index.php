@@ -238,7 +238,7 @@
 
         <!-- Filter Section -->
         <div class="filter-section">
-            <form method="get" class="filter-form">
+            <form method="get" class="filter-form" novalidate>
                 <div class="filter-group">
                     <label for="start_date">Từ ngày</label>
                     <input type="date" id="start_date" name="start_date" class="form-control" value="<?php echo htmlspecialchars($start); ?>">

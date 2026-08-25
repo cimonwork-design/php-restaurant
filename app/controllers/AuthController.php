@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class AuthController extends Controller
 {
@@ -46,17 +47,28 @@ class AuthController extends Controller
 
         // Get JSON input
         $input = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($input)) {
+            $input = $_POST;
+        }
 
         $username = trim($input['username'] ?? '');
         $password = $input['password'] ?? '';
         $remember = $input['remember'] ?? false;
 
         // Validate
-        if (empty($username) || empty($password)) {
+        if ($username === '') {
+            $this->json(['success' => false, 'message' => formMessage('username_required')], 400);
+            return;
+        }
+        if ($password === '') {
             $this->json([
                 'success' => false,
-                'message' => 'Vui lòng nhập đầy đủ thông tin đăng nhập'
+                'message' => formMessage('password_required')
             ], 400);
+            return;
+        }
+        if (!preg_match('/^[A-Za-z0-9._-]+$/', $username)) {
+            $this->json(['success' => false, 'message' => formMessage('username_format')], 400);
             return;
         }
 
@@ -69,7 +81,7 @@ class AuthController extends Controller
 
             $this->json([
                 'success' => false,
-                'message' => 'Tên đăng nhập không tồn tại'
+                'message' => formMessage('username_not_found')
             ], 401);
             return;
         }
@@ -83,7 +95,7 @@ class AuthController extends Controller
 
             $this->json([
                 'success' => false,
-                'message' => 'Mật khẩu không đúng'
+                'message' => formMessage('password_invalid')
             ], 401);
             return;
         }
@@ -213,19 +225,53 @@ class AuthController extends Controller
 
         // Get JSON input
         $input = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($input)) {
+            $input = $_POST;
+        }
 
         $fullname = trim($input['fullname'] ?? '');
         $username = trim($input['username'] ?? '');
         $password = $input['password'] ?? '';
-        // Public registration can only create a basic staff account.
-        // Admin/manager accounts must be created by an admin inside the system.
-        $role = 'user';
+        $confirmPassword = $input['confirm_password'] ?? '';
+        $role = trim($input['role'] ?? '');
 
         // Validate
+        if ($fullname === '') {
+            $this->json(['success' => false, 'message' => formMessage('fullname_required')], 400);
+            return;
+        }
+        if ($username === '') {
+            $this->json(['success' => false, 'message' => formMessage('username_required')], 400);
+            return;
+        }
+        if ($password === '') {
+            $this->json(['success' => false, 'message' => formMessage('password_required')], 400);
+            return;
+        }
+        if ($confirmPassword === '') {
+            $this->json(['success' => false, 'message' => formMessage('confirm_password_required')], 400);
+            return;
+        }
+        if (!in_array($role, ['admin', 'manager', 'user'], true)) {
+            $this->json(['success' => false, 'message' => formMessage('role_invalid')], 400);
+            return;
+        }
+        if (strlen($username) < 3 || strlen($username) > 60) {
+            $this->json(['success' => false, 'message' => formMessage('username_length')], 400);
+            return;
+        }
+        if (!preg_match('/^[A-Za-z0-9._-]+$/', $username)) {
+            $this->json(['success' => false, 'message' => formMessage('username_format')], 400);
+            return;
+        }
+        if (strlen($fullname) > 100) {
+            $this->json(['success' => false, 'message' => formMessage('fullname_length')], 400);
+            return;
+        }
         if (empty($fullname) || empty($username) || empty($password)) {
             $this->json([
                 'success' => false,
-                'message' => 'Vui lòng điền đầy đủ tất cả các trường'
+                'message' => formMessage('required')
             ], 400);
             return;
         }
@@ -233,8 +279,12 @@ class AuthController extends Controller
         if (strlen($password) < 6) {
             $this->json([
                 'success' => false,
-                'message' => 'Mật khẩu phải có tối thiểu 6 ký tự'
+                'message' => formMessage('password_length')
             ], 400);
+            return;
+        }
+        if ($password !== $confirmPassword) {
+            $this->json(['success' => false, 'message' => formMessage('password_mismatch')], 400);
             return;
         }
 
@@ -243,7 +293,7 @@ class AuthController extends Controller
         if ($userExists) {
             $this->json([
                 'success' => false,
-                'message' => 'Tên đăng nhập đã tồn tại'
+                'message' => formMessage('username_exists')
             ], 409);
             return;
         }

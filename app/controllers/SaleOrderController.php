@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class SaleOrderController extends Controller
 {
@@ -144,6 +145,44 @@ class SaleOrderController extends Controller
         return $inventoryWarnings;
     }
 
+    private function validateOrderInput($qtys, $orderTime, $discount, $vatRate, $subtotal)
+    {
+        foreach ($qtys as $menuId => $qty) {
+            if (!filter_var($qty, FILTER_VALIDATE_INT) || (int)$qty <= 0) {
+                return formMessage('quantity_invalid');
+            }
+            if (!$this->menuModel->find((int)$menuId)) {
+                return formMessage('menu_not_found');
+            }
+        }
+
+        if ($orderTime !== '' && strtotime($orderTime) === false) {
+            return formMessage('order_time_invalid');
+        }
+        if ($discount < 0 || $discount >= $subtotal) {
+            return formMessage('discount_invalid');
+        }
+        if ($vatRate < 0 || $vatRate > 100) {
+            return formMessage('vat_invalid');
+        }
+
+        return null;
+    }
+
+    private function validateRawOrderItems($qtys)
+    {
+        foreach ($qtys as $menuId => $qty) {
+            if (!filter_var($qty, FILTER_VALIDATE_INT) || (int)$qty <= 0) {
+                return formMessage('quantity_invalid');
+            }
+            if (!$this->menuModel->find((int)$menuId)) {
+                return formMessage('menu_not_found');
+            }
+        }
+
+        return null;
+    }
+
     private function getOrderSubtotal($orderId)
     {
         $db = getDB();
@@ -179,10 +218,21 @@ class SaleOrderController extends Controller
         if (!$user) return;
 
         $data = $this->getPost();
+        if (empty($data['table_id'])) {
+            setFlash('error', formMessage('table_required'));
+            $this->redirect('sale_order/create');
+            return;
+        }
+        $rawItemsError = $this->validateRawOrderItems($data['qty'] ?? []);
+        if ($rawItemsError) {
+            setFlash('error', $rawItemsError);
+            $this->redirect('sale_order/create');
+            return;
+        }
         [$details, $subtotal] = $this->buildDetailsFromQty($data['qty'] ?? []);
 
         if (empty($details)) {
-            setFlash('error', 'Vui lòng chọn ít nhất một món');
+            setFlash('error', formMessage('order_empty'));
             $this->redirect('sale_order/create');
             return;
         }
@@ -195,8 +245,28 @@ class SaleOrderController extends Controller
             return;
         }
 
+        if (!empty($data['table_id'])) {
+            $table = $this->tableModel->find((int)$data['table_id']);
+            if (!$table) {
+                setFlash('error', formMessage('table_invalid'));
+                $this->redirect('sale_order/create');
+                return;
+            }
+            if ($table['status'] !== 'free') {
+                setFlash('error', formMessage('table_not_free'));
+                $this->redirect('sale_order/create');
+                return;
+            }
+        }
+
         $discount = (float)($data['discount'] ?? 0);
         $vatRate = (float)($data['vat_rate'] ?? 0);
+        $inputError = $this->validateOrderInput($data['qty'] ?? [], $data['order_time'] ?? '', $discount, $vatRate, $subtotal);
+        if ($inputError) {
+            setFlash('error', $inputError);
+            $this->redirect('sale_order/create');
+            return;
+        }
         $total = $this->calculateGrandTotal($subtotal, $discount, $vatRate);
         $orderTime = $this->normalizeDatetime($data['order_time'] ?? '');
 
@@ -295,6 +365,12 @@ class SaleOrderController extends Controller
         }
 
         $data = $this->getPost();
+        $rawItemsError = $this->validateRawOrderItems($data['qty'] ?? []);
+        if ($rawItemsError) {
+            setFlash('error', $rawItemsError);
+            $this->redirect('sale_order/edit/' . $id);
+            return;
+        }
         [$details, $subtotal] = $this->buildDetailsFromQty($data['qty'] ?? []);
         if (empty($details)) {
             setFlash('error', 'Vui lòng chọn ít nhất một món');
@@ -312,8 +388,27 @@ class SaleOrderController extends Controller
 
         $discount = (float)($data['discount'] ?? 0);
         $vatRate = (float)($data['vat_rate'] ?? 0);
+        $inputError = $this->validateOrderInput($data['qty'] ?? [], $data['order_time'] ?? '', $discount, $vatRate, $subtotal);
+        if ($inputError) {
+            setFlash('error', $inputError);
+            $this->redirect('sale_order/edit/' . $id);
+            return;
+        }
         $total = $this->calculateGrandTotal($subtotal, $discount, $vatRate);
         $newTableId = !empty($data['table_id']) ? $data['table_id'] : null;
+        if ($newTableId) {
+            $table = $this->tableModel->find((int)$newTableId);
+            if (!$table) {
+                setFlash('error', formMessage('table_invalid'));
+                $this->redirect('sale_order/edit/' . $id);
+                return;
+            }
+            if ($table['status'] !== 'free' && $table['id'] != ($existingOrder['table_id'] ?? null)) {
+                setFlash('error', formMessage('table_not_free'));
+                $this->redirect('sale_order/edit/' . $id);
+                return;
+            }
+        }
 
         $db = getDB();
         $db->beginTransaction();

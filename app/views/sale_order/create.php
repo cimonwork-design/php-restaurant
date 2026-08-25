@@ -175,7 +175,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="post" action="<?php echo BASE_URL; ?>/sale_order/store" id="posForm">
+        <form method="post" action="<?php echo BASE_URL; ?>/sale_order/store" id="posForm" novalidate>
             <div class="pos-shell">
                 <div>
                     <div class="pos-toolbar">

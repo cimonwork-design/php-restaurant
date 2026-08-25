@@ -20,7 +20,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="post" action="<?php echo BASE_URL; ?>/reservation/store">
+                <form method="post" action="<?php echo BASE_URL; ?>/reservation/store" novalidate>
                     <div class="mb-3">
                         <label>Khách hàng</label>
                         <input type="text" name="customer_name" class="form-control" required>

@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class ReservationController extends Controller
 {
@@ -63,7 +64,39 @@ class ReservationController extends Controller
         $required = ['table_id', 'customer_name', 'start_time', 'end_time'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('required'));
+            $this->redirect('reservation/create');
+            return;
+        }
+
+        $table = $this->tableModel->find((int)$data['table_id']);
+        if (!$table) {
+            setFlash('error', formMessage('table_invalid'));
+            $this->redirect('reservation/create');
+            return;
+        }
+        if (($table['status'] ?? 'free') === 'occupied') {
+            setFlash('error', formMessage('table_not_free'));
+            $this->redirect('reservation/create');
+            return;
+        }
+        if (strlen($data['customer_name']) > 100) {
+            setFlash('error', formMessage('customer_length'));
+            $this->redirect('reservation/create');
+            return;
+        }
+        if (!filter_var($data['party_size'] ?? null, FILTER_VALIDATE_INT) || (int)$data['party_size'] < 1) {
+            setFlash('error', formMessage('party_invalid'));
+            $this->redirect('reservation/create');
+            return;
+        }
+        if (!in_array($data['status'] ?? 'pending', ['pending', 'confirmed', 'cancelled'], true)) {
+            setFlash('error', formMessage('status_invalid'));
+            $this->redirect('reservation/create');
+            return;
+        }
+        if (strtotime($data['start_time']) === false || strtotime($data['end_time']) === false) {
+            setFlash('error', formMessage('datetime_invalid'));
             $this->redirect('reservation/create');
             return;
         }
@@ -72,7 +105,7 @@ class ReservationController extends Controller
         $end = $this->normalizeDatetime($data['end_time']);
 
         if (strtotime($end) <= strtotime($start)) {
-            setFlash('error', 'Thá»i gian káº¿t thÃºc pháº£i lá»›n hÆ¡n thá»i gian báº¯t Ä‘áº§u');
+            setFlash('error', formMessage('end_before_start'));
             $this->redirect('reservation/create');
             return;
         }
@@ -80,7 +113,7 @@ class ReservationController extends Controller
         // check overlap
         $overlaps = $this->model->findOverlapping($data['table_id'], $start, $end);
         if (!empty($overlaps)) {
-            setFlash('error', 'BÃ n Ä‘Ã£ cÃ³ Ä‘áº·t chá»— trÃ¹ng thá»i gian');
+            setFlash('error', formMessage('reservation_overlap'));
             $this->redirect('reservation/create');
             return;
         }
@@ -135,7 +168,38 @@ class ReservationController extends Controller
         $required = ['table_id', 'customer_name', 'start_time', 'end_time'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('required'));
+            $this->redirect('reservation/edit/' . $id);
+            return;
+        }
+
+        if (!$this->model->find($id)) {
+            setFlash('error', formMessage('not_found'));
+            $this->redirect('reservation');
+            return;
+        }
+        if (!$this->tableModel->find((int)$data['table_id'])) {
+            setFlash('error', formMessage('table_invalid'));
+            $this->redirect('reservation/edit/' . $id);
+            return;
+        }
+        if (strlen($data['customer_name']) > 100) {
+            setFlash('error', formMessage('customer_length'));
+            $this->redirect('reservation/edit/' . $id);
+            return;
+        }
+        if (!filter_var($data['party_size'] ?? null, FILTER_VALIDATE_INT) || (int)$data['party_size'] < 1) {
+            setFlash('error', formMessage('party_invalid'));
+            $this->redirect('reservation/edit/' . $id);
+            return;
+        }
+        if (!in_array($data['status'] ?? 'pending', ['pending', 'confirmed', 'cancelled'], true)) {
+            setFlash('error', formMessage('status_invalid'));
+            $this->redirect('reservation/edit/' . $id);
+            return;
+        }
+        if (strtotime($data['start_time']) === false || strtotime($data['end_time']) === false) {
+            setFlash('error', formMessage('datetime_invalid'));
             $this->redirect('reservation/edit/' . $id);
             return;
         }
@@ -144,7 +208,7 @@ class ReservationController extends Controller
         $end = $this->normalizeDatetime($data['end_time']);
 
         if (strtotime($end) <= strtotime($start)) {
-            setFlash('error', 'Thá»i gian káº¿t thÃºc pháº£i lá»›n hÆ¡n thá»i gian báº¯t Ä‘áº§u');
+            setFlash('error', formMessage('end_before_start'));
             $this->redirect('reservation/edit/' . $id);
             return;
         }
@@ -152,7 +216,7 @@ class ReservationController extends Controller
         // check overlap excluding current
         $overlaps = $this->model->findOverlapping($data['table_id'], $start, $end, $id);
         if (!empty($overlaps)) {
-            setFlash('error', 'BÃ n Ä‘Ã£ cÃ³ Ä‘áº·t chá»— trÃ¹ng thá»i gian');
+            setFlash('error', formMessage('reservation_overlap'));
             $this->redirect('reservation/edit/' . $id);
             return;
         }

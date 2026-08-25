@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class MenuItemController extends Controller
 {
@@ -52,13 +53,39 @@ class MenuItemController extends Controller
         $required = ['code', 'name', 'price'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('required'));
+            $this->redirect('menu_item/create');
+            return;
+        }
+
+        if (strlen($data['code']) > 50) {
+            setFlash('error', formMessage('code_length'));
+            $this->redirect('menu_item/create');
+            return;
+        }
+        if (!preg_match('/^[A-Za-z0-9_-]+$/', $data['code'])) {
+            setFlash('error', formMessage('code_format'));
+            $this->redirect('menu_item/create');
+            return;
+        }
+        if (strlen($data['name']) > 100) {
+            setFlash('error', formMessage('name_length'));
+            $this->redirect('menu_item/create');
+            return;
+        }
+        if ($data['price'] === '' || $data['price'] === null) {
+            setFlash('error', formMessage('price_required'));
+            $this->redirect('menu_item/create');
+            return;
+        }
+        if (!is_numeric($data['price']) || (float)$data['price'] <= 0) {
+            setFlash('error', formMessage('price_invalid'));
             $this->redirect('menu_item/create');
             return;
         }
 
         if ($this->model->findByCode($data['code'])) {
-            setFlash('error', 'MÃ£ mÃ³n Ä‘Ã£ tá»“n táº¡i');
+            setFlash('error', formMessage('code_exists'));
             $this->redirect('menu_item/create');
             return;
         }
@@ -109,14 +136,30 @@ class MenuItemController extends Controller
         $required = ['code', 'name', 'price'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', formMessage('required'));
+            $this->redirect('menu_item/edit/' . $id);
+            return;
+        }
+
+        if (strlen($data['code']) > 50 || !preg_match('/^[A-Za-z0-9_-]+$/', $data['code'])) {
+            setFlash('error', strlen($data['code']) > 50 ? formMessage('code_length') : formMessage('code_format'));
+            $this->redirect('menu_item/edit/' . $id);
+            return;
+        }
+        if (strlen($data['name']) > 100) {
+            setFlash('error', formMessage('name_length'));
+            $this->redirect('menu_item/edit/' . $id);
+            return;
+        }
+        if ($data['price'] === '' || !is_numeric($data['price']) || (float)$data['price'] <= 0) {
+            setFlash('error', $data['price'] === '' ? formMessage('price_required') : formMessage('price_invalid'));
             $this->redirect('menu_item/edit/' . $id);
             return;
         }
 
         $existing = $this->model->findByCode($data['code']);
         if ($existing && $existing['id'] != $id) {
-            setFlash('error', 'MÃ£ mÃ³n Ä‘Ã£ tá»“n táº¡i');
+            setFlash('error', formMessage('code_exists'));
             $this->redirect('menu_item/edit/' . $id);
             return;
         }

@@ -366,18 +366,38 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             // Validate
-            if (!fullname || !username || !role || !password || !confirmPassword) {
-                showAlert('Vui lòng điền đầy đủ tất cả các trường');
+            if (!fullname) {
+                showAlert('Họ và tên không được để trống.');
+                return;
+            }
+
+            if (!username) {
+                showAlert('Tên đăng nhập không được để trống.');
+                return;
+            }
+
+            if (!role) {
+                showAlert('Vai trò không được để trống.');
+                return;
+            }
+
+            if (!password) {
+                showAlert('Mật khẩu không được để trống.');
+                return;
+            }
+
+            if (!confirmPassword) {
+                showAlert('Vui lòng nhập mật khẩu xác nhận.');
                 return;
             }
 
             if (password.length < 6) {
-                showAlert('Mật khẩu phải có tối thiểu 6 ký tự');
+                showAlert('Mật khẩu phải có tối thiểu 6 ký tự.');
                 return;
             }
 
             if (password !== confirmPassword) {
-                showAlert('Mật khẩu xác nhận không khớp');
+                showAlert('Mật khẩu xác nhận không khớp.');
                 return;
             }
 
@@ -393,13 +413,11 @@
             try {
                 const response = await fetch(`${BASE_URL}/auth/doRegister`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+                    body: new URLSearchParams({
                         fullname: fullname,
                         username: username,
                         password: password,
+                        confirm_password: confirmPassword,
                         role: role
                     })
                 });

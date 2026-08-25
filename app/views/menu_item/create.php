@@ -19,7 +19,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form action="<?php echo BASE_URL; ?>/menu_item/store" method="post">
+                <form action="<?php echo BASE_URL; ?>/menu_item/store" method="post" novalidate>
                     <div class="mb-2">
                         <label class="form-label">Mã (code)</label>
                         <input class="form-control" type="text" name="code" required>

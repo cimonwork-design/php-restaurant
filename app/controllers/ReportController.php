@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class ReportController extends Controller
 {
@@ -18,10 +19,19 @@ class ReportController extends Controller
         $start = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-6 days'));
         $end = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 
+        if (!validDateValue($start) || !validDateValue($end)) {
+            setFlash('error', formMessage('date_invalid'));
+            $start = date('Y-m-d', strtotime('-6 days'));
+            $end = date('Y-m-d');
+        } elseif ($start > $end) {
+            setFlash('error', formMessage('date_range_invalid'));
+            $start = $end;
+        }
+
         $db = getDB();
 
         $selectedDay = isset($_GET['day']) ? $_GET['day'] : null;
-        if ($selectedDay && (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDay) || $selectedDay < $start || $selectedDay > $end)) {
+        if ($selectedDay && (!validDateValue($selectedDay) || $selectedDay < $start || $selectedDay > $end)) {
             $selectedDay = null;
         }
 

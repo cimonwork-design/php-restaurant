@@ -6,6 +6,7 @@
 
 require_once BASE_PATH . '/core/Controller.php';
 require_once BASE_PATH . '/helpers/JWT.php';
+require_once BASE_PATH . '/helpers/FormValidation.php';
 
 class RestaurantTableController extends Controller
 {
@@ -52,13 +53,24 @@ class RestaurantTableController extends Controller
         $required = ['number'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', 'Số bàn không được để trống.');
+            $this->redirect('restaurant_table/create');
+            return;
+        }
+
+        if (strlen($data['number']) > 10) {
+            setFlash('error', 'Số bàn không được vượt quá 10 ký tự.');
+            $this->redirect('restaurant_table/create');
+            return;
+        }
+        if (!in_array($data['status'] ?? 'free', ['free', 'occupied', 'reserved'], true)) {
+            setFlash('error', formMessage('status_invalid'));
             $this->redirect('restaurant_table/create');
             return;
         }
 
         if ($this->model->findByNumber($data['number'])) {
-            setFlash('error', 'Sá»‘ bÃ n Ä‘Ã£ tá»“n táº¡i');
+            setFlash('error', 'Số bàn đã tồn tại.');
             $this->redirect('restaurant_table/create');
             return;
         }
@@ -107,7 +119,18 @@ class RestaurantTableController extends Controller
         $required = ['number'];
         $errors = $this->validateRequired($data, $required);
         if (!empty($errors)) {
-            setFlash('error', implode('; ', $errors));
+            setFlash('error', 'Số bàn không được để trống.');
+            $this->redirect('restaurant_table/edit/' . $id);
+            return;
+        }
+
+        if (strlen($data['number']) > 10) {
+            setFlash('error', 'Số bàn không được vượt quá 10 ký tự.');
+            $this->redirect('restaurant_table/edit/' . $id);
+            return;
+        }
+        if (!in_array($data['status'] ?? 'free', ['free', 'occupied', 'reserved'], true)) {
+            setFlash('error', formMessage('status_invalid'));
             $this->redirect('restaurant_table/edit/' . $id);
             return;
         }
@@ -115,7 +138,7 @@ class RestaurantTableController extends Controller
         // Check duplicate number
         $existing = $this->model->findByNumber($data['number']);
         if ($existing && $existing['id'] != $id) {
-            setFlash('error', 'Sá»‘ bÃ n Ä‘Ã£ tá»“n táº¡i');
+            setFlash('error', 'Số bàn đã tồn tại.');
             $this->redirect('restaurant_table/edit/' . $id);
             return;
         }
@@ -136,6 +159,18 @@ class RestaurantTableController extends Controller
         if (!$user) return;
 
         if (!$id) {
+            $this->redirect('restaurant_table');
+            return;
+        }
+
+        $table = $this->model->find($id);
+        if (!$table) {
+            setFlash('error', formMessage('not_found'));
+            $this->redirect('restaurant_table');
+            return;
+        }
+        if ($table['status'] !== 'free') {
+            setFlash('error', 'Chỉ được xóa bàn đang trống.');
             $this->redirect('restaurant_table');
             return;
         }
