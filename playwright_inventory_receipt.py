@@ -160,17 +160,19 @@ def login(page, username: str, password: str):
         page.context.clear_cookies()
     except Exception:
         pass
+    page.goto(BASE_URL + "auth/logout", wait_until="domcontentloaded")
+    page.wait_for_timeout(200)
     page.goto(BASE_URL + "auth/login", wait_until="domcontentloaded")
     try:
         page.evaluate("localStorage.clear(); sessionStorage.clear();")
     except Exception:
         pass
-    page.goto(BASE_URL + "auth/login", wait_until="domcontentloaded")
     page.wait_for_selector("#username", timeout=8000)
     page.fill("#username", username)
     page.fill("#password", password)
     page.click("#btnLogin")
-    page.wait_for_timeout(1200)
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(600)
 
 
 def logout(page):
@@ -505,22 +507,24 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
         has_supplier = page.locator("#supplier").count() > 0
         has_date = page.locator("#receipt_date").count() > 0
         has_note = page.locator("#note").count() > 0
+        s2 = shot(page, "TC02_UI_thong_tin_chung")
         tc02_ok = has_supplier and has_date and has_note
         add_result(
             2, "UI Display", "Hiển thị đầy đủ các trường thông tin chung (NCC, Ngày nhập, Ghi chú)",
             "1. Quan sát phần 'Thông tin phiếu nhập'.\n2. Kiểm tra sự tồn tại của 3 input: supplier, receipt_date, note.",
             "N/A", "Có đủ 3 trường: Nhà cung cấp, Ngày nhập, Ghi chú.",
-            f"supplier={has_supplier}, date={has_date}, note={has_note}", pass_fail(tc02_ok), [s1], "High"
+            f"supplier={has_supplier}, date={has_date}, note={has_note}", pass_fail(tc02_ok), [s2], "High"
         )
 
         # TC03: Ngày nhập mặc định
         date_val = page.locator("#receipt_date").input_value()
+        s3 = shot(page, "TC03_UI_ngay_nhap_mac_dinh")
         tc03_ok = (date_val == today_str)
         add_result(
             3, "UI Display", "Trường Ngày nhập mặc định là ngày hiện tại (YYYY-MM-DD)",
             "1. Mở form tạo mới.\n2. Lấy giá trị trường receipt_date.",
             f"Ngày hiện tại: {today_str}", f"Giá trị mặc định bằng {today_str}.",
-            f"Giá trị thực tế: '{date_val}'", pass_fail(tc03_ok), [s1], "Medium"
+            f"Giá trị thực tế: '{date_val}'", pass_fail(tc03_ok), [s3], "Medium"
         )
 
         # TC04: Các cột bảng chi tiết nguyên liệu
@@ -540,35 +544,38 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
 
         # TC05: Dropdown danh sách nguyên liệu từ DB
         options_count = page.locator(".ingredient-select option").count()
+        s5 = shot(page, "TC05_dropdown_nguyen_lieu")
         tc05_ok = options_count > 1
         add_result(
             5, "UI Display", "Hiển thị dropdown danh sách nguyên liệu lấy từ cơ sở dữ liệu",
             "1. Quan sát thẻ select nguyên liệu.\n2. Đếm số lượng option có sẵn.",
             "Database: bảng ingredient", "Dropdown chứa option mặc định và danh sách các nguyên liệu từ DB.",
-            f"Số lượng options: {options_count}", pass_fail(tc05_ok), [s4], "High"
+            f"Số lượng options: {options_count}", pass_fail(tc05_ok), [s5], "High"
         )
 
         # TC06: Tổng cộng và số mục mặc định
         total_text = page.locator("#receipt-total").inner_text()
         count_text = page.locator("#item-count").inner_text()
+        s6 = shot(page, "TC06_tong_cong_mac_dinh")
         tc06_ok = ("0" in total_text) and ("mục" in count_text)
         add_result(
             6, "UI Display", "Hiển thị ô Tổng cộng giá trị mặc định là 0 đ và số mục",
             "1. Quan sát khung Tổng tiền dưới form.", "N/A",
             "Tổng cộng hiển thị '0 đ' và số mục khớp số dòng.",
-            f"Tổng cộng: '{total_text}', Số mục: '{count_text}'", pass_fail(tc06_ok), [s4], "Low"
+            f"Tổng cộng: '{total_text}', Số mục: '{count_text}'", pass_fail(tc06_ok), [s6], "Low"
         )
 
         # TC07: Nút Thêm dòng, Tạo phiếu nhập, Hủy
         has_btn_add = page.locator("#add-item").count() > 0
         has_btn_submit = page.locator("#btnSubmitReceipt").count() > 0
         has_btn_cancel = page.locator("#btnCancel").count() > 0
+        s7 = shot(page, "TC07_cac_nut_chuc_nang")
         tc07_ok = has_btn_add and has_btn_submit and has_btn_cancel
         add_result(
             7, "UI Display", "Hiển thị đầy đủ các nút chức năng (Thêm dòng, Tạo phiếu nhập, Hủy)",
             "1. Kiểm tra sự tồn tại của 3 nút thao tác chính trên form.", "N/A",
             "Có đủ 3 nút: Thêm dòng (#add-item), Tạo phiếu nhập (#btnSubmitReceipt), Hủy (#btnCancel).",
-            f"add={has_btn_add}, submit={has_btn_submit}, cancel={has_btn_cancel}", pass_fail(tc07_ok), [s4], "Medium"
+            f"add={has_btn_add}, submit={has_btn_submit}, cancel={has_btn_cancel}", pass_fail(tc07_ok), [s7], "Medium"
         )
 
         # TC08: Nút Quay lại / Hủy điều hướng về danh sách
@@ -677,12 +684,13 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
             BASE_URL + "inventory_receipt/store",
             data={"receipt_date": today_str, "ingredient_id": ["1"], "qty": ["5"], "unit_price": ["10000"]},
         )
+        s15 = shot(page, "TC15_guest_api_blocked")
         tc15_ok = (guest_req.status in (401, 302, 403) or "auth/login" in guest_req.url)
         add_result(
             15, "Access Control", "Người dùng chưa đăng nhập gọi POST API /inventory_receipt/store bị chặn",
             "1. Gửi request POST /inventory_receipt/store không có JWT cookie.",
             "Actor: Guest", "Bị từ chối hoặc chuyển hướng về auth/login.",
-            f"HTTP status: {guest_req.status}", pass_fail(tc15_ok), [s13], "High"
+            f"HTTP status: {guest_req.status}", pass_fail(tc15_ok), [s15], "High"
         )
 
         # ======================================================================
@@ -925,12 +933,13 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
             form={"receipt_date": "invalid-date-format", "ingredient_id": "1", "qty": "1", "unit_price": "10000"},
             headers={"X-Requested-With": "XMLHttpRequest"},
         )
+        s28 = shot(page, "TC28_invalid_date_format_api")
         tc28_ok = (resp28.status == 422 or "định dạng" in resp28.text().lower())
         add_result(
             28, "Validation - Date", "Gửi dữ liệu Ngày nhập sai định dạng YYYY-MM-DD qua API",
             "1. Gửi request POST /store với receipt_date = 'invalid-date-format'.",
             "Date: 'invalid-date-format'", "Server bắt lỗi định dạng ngày không hợp lệ, từ chối lưu.",
-            f"HTTP status: {resp28.status}", pass_fail(tc28_ok), [s27], "High"
+            f"HTTP status: {resp28.status}", pass_fail(tc28_ok), [s28], "High"
         )
 
         # TC29: Kiểm tra tính đúng đắn của ngày nhuận 29/02
@@ -944,12 +953,13 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
             form={"receipt_date": "2023-02-29", "ingredient_id": "1", "qty": "1", "unit_price": "10000"},
             headers={"X-Requested-With": "XMLHttpRequest"},
         )
+        s29 = shot(page, "TC29_leap_year_test")
         tc29_ok = (resp29_valid.status == 200) and (resp29_invalid.status == 422)
         add_result(
             29, "Validation - Date", "Kiểm tra xử lý ngày nhuận (29/02/2024 hợp lệ vs 29/02/2023 không nhuận)",
             "1. POST ngày 29/02/2024 (năm nhuận) -> Pass.\n2. POST ngày 29/02/2023 (không nhuận) -> Bắt lỗi.",
             "Valid: 2024-02-29 / Invalid: 2023-02-29", "Chấp nhận ngày nhuận thực tế, từ chối ngày không tồn tại.",
-            f"Nhuận 2024 HTTP={resp29_valid.status}; Không nhuận 2023 HTTP={resp29_invalid.status}", pass_fail(tc29_ok), [s27], "Medium"
+            f"Nhuận 2024 HTTP={resp29_valid.status}; Không nhuận 2023 HTTP={resp29_invalid.status}", pass_fail(tc29_ok), [s29], "Medium"
         )
 
         # ======================================================================
@@ -1091,12 +1101,13 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
             form={"receipt_date": today_str, "ingredient_id": "999999", "qty": "5", "unit_price": "10000"},
             headers={"X-Requested-With": "XMLHttpRequest"},
         )
+        s37 = shot(page, "TC37_invalid_ingredient_id_api")
         tc37_ok = (resp37.status == 422 or "không tồn tại" in resp37.text().lower())
         add_result(
             37, "Detail - Ingredient", "Gửi ID nguyên liệu không tồn tại trong cơ sở dữ liệu (ID: 999999)",
             "1. Gửi POST /store với ingredient_id = '999999'.",
             "Ingredient ID: 999999", "Báo lỗi 'Nguyên liệu không tồn tại trong hệ thống'.",
-            f"HTTP status: {resp37.status}", pass_fail(tc37_ok), [s36], "High"
+            f"HTTP status: {resp37.status}", pass_fail(tc37_ok), [s37], "High"
         )
 
         # TC38: Chọn cùng 1 nguyên liệu trên 2 dòng khác nhau (Trùng lặp)

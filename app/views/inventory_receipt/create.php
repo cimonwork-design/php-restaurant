@@ -463,17 +463,23 @@
             const errors = [];
             clientErrorBox.classList.add('d-none');
             clientErrorList.innerHTML = '';
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.receipt-row').forEach(el => el.classList.remove('row-duplicate'));
 
             // 1. Validate Supplier
-            const supplierVal = document.getElementById('supplier').value.trim();
-            const supplierRaw = document.getElementById('supplier').value;
+            const supplierInput = document.getElementById('supplier');
+            const supplierVal = supplierInput.value.trim();
+            const supplierRaw = supplierInput.value;
             if (supplierRaw.length > 0 && supplierVal.length === 0) {
                 errors.push('Tên nhà cung cấp không được chỉ chứa khoảng trắng.');
+                supplierInput.classList.add('is-invalid');
             } else if (supplierVal.length > 0) {
                 if (supplierVal.length < 2) {
                     errors.push('Tên nhà cung cấp phải có tối thiểu 2 ký tự.');
+                    supplierInput.classList.add('is-invalid');
                 } else if (supplierVal.length > 100) {
                     errors.push('Tên nhà cung cấp không được vượt quá 100 ký tự.');
+                    supplierInput.classList.add('is-invalid');
                 }
             }
 
@@ -482,18 +488,22 @@
             const dateVal = dateInput.value.trim();
             if (!dateVal) {
                 errors.push('Ngày nhập kho là bắt buộc, không được để trống.');
+                dateInput.classList.add('is-invalid');
             } else {
                 const today = '<?php echo date('Y-m-d'); ?>';
                 if (dateVal > today) {
                     errors.push(`Ngày nhập kho không được lớn hơn ngày hiện tại (${today}).`);
+                    dateInput.classList.add('is-invalid');
                 } else if (dateVal < '2020-01-01') {
                     errors.push('Ngày nhập kho không được nhỏ hơn ngày 01/01/2020.');
+                    dateInput.classList.add('is-invalid');
                 }
             }
 
             // 3. Validate Note
             if (noteInput && noteInput.value.length > 500) {
                 errors.push('Ghi chú không được vượt quá 500 ký tự.');
+                noteInput.classList.add('is-invalid');
             }
 
             // 4. Validate Row Items
@@ -515,10 +525,13 @@
 
                 if (!ingId) {
                     errors.push(`Dòng ${rowNum}: Vui lòng chọn nguyên liệu.`);
+                    sel.classList.add('is-invalid');
                 } else {
                     const ingName = sel.options[sel.selectedIndex].textContent.trim();
                     if (seenIngredients[ingId]) {
                         errors.push(`Dòng ${rowNum}: Nguyên liệu "${ingName}" bị trùng lặp với dòng ${seenIngredients[ingId]}.`);
+                        r.classList.add('row-duplicate');
+                        sel.classList.add('is-invalid');
                     } else {
                         seenIngredients[ingId] = rowNum;
                     }
@@ -526,28 +539,35 @@
 
                 if (qVal === '' || isNaN(qVal)) {
                     errors.push(`Dòng ${rowNum}: Số lượng không hợp lệ.`);
+                    qtyIn.classList.add('is-invalid');
                 } else {
                     const qNum = parseFloat(qVal);
                     if (qNum <= 0) {
                         errors.push(`Dòng ${rowNum}: Số lượng nhập phải lớn hơn 0.`);
+                        qtyIn.classList.add('is-invalid');
                     } else if (qNum > 99999) {
                         errors.push(`Dòng ${rowNum}: Số lượng không được vượt quá 99.999.`);
+                        qtyIn.classList.add('is-invalid');
                     } else {
                         const dot = qVal.indexOf('.');
                         if (dot !== -1 && qVal.substring(dot + 1).length > 3) {
                             errors.push(`Dòng ${rowNum}: Số lượng chỉ cho phép tối đa 3 chữ số thập phân.`);
+                            qtyIn.classList.add('is-invalid');
                         }
                     }
                 }
 
                 if (pVal === '' || isNaN(pVal)) {
                     errors.push(`Dòng ${rowNum}: Đơn giá không hợp lệ.`);
+                    priceIn.classList.add('is-invalid');
                 } else {
                     const pNum = parseFloat(pVal);
                     if (pNum < 0) {
                         errors.push(`Dòng ${rowNum}: Đơn giá không được âm.`);
+                        priceIn.classList.add('is-invalid');
                     } else if (pNum > 1000000000) {
                         errors.push(`Dòng ${rowNum}: Đơn giá không được vượt quá 1.000.000.000 đ.`);
+                        priceIn.classList.add('is-invalid');
                     }
                 }
             });
