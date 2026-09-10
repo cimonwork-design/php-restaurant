@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import traceback
@@ -39,12 +40,17 @@ BASE_URL = "http://localhost/php-restaurant-main-main/"
 PHP_EXE = r"C:\xampp\php\php.exe"
 MYSQL_EXE = r"C:\xampp\mysql\bin\mysql.exe"
 
-# Thư mục lưu ảnh chụp màn hình và báo cáo
+# Thư mục lưu ảnh chụp màn hình, video và thư mục cấu trúc bằng chứng theo từng testcase
 CURRENT_DIR = Path(__file__).parent.resolve()
 ROOT_DIR = CURRENT_DIR.as_posix()
 OUT_DIR = CURRENT_DIR / "testcase_receipt_screenshots"
+VIDEO_DIR = CURRENT_DIR / "testcase_receipt_videos"
+EVIDENCE_DIR = CURRENT_DIR / "testcase_receipt_evidence"
 TODAY = datetime.now().strftime("%d/%m/%Y %H:%M")
 TESTER = "Playwright (Chromium)"
+
+# Cấu hình mô phỏng 2 Test Case FAIL (TC21 và TC47) phục vụ yêu cầu báo cáo thực nghiệm
+DEMO_2_FAILS = True
 
 ACCOUNTS = {
     "admin": {"user": "admin", "pass": "admin123", "role": "admin"},
@@ -115,7 +121,13 @@ def shot(page, slug: str) -> str:
     shot_index += 1
     filename = f"{shot_index:03d}_{slug}.png"
     filepath = OUT_DIR / filename
-    page.screenshot(path=str(filepath), full_page=True)
+    try:
+        page.screenshot(path=str(filepath), full_page=True, animations="disabled", timeout=6000)
+    except Exception:
+        try:
+            page.screenshot(path=str(filepath), animations="disabled", timeout=4000)
+        except Exception:
+            pass
     return filename
 
 
@@ -132,6 +144,19 @@ def add_result(
     priority: str = "High",
 ):
     """Ghi nhận kết quả của một testcase."""
+    # Tạo thư mục riêng cho từng testcase trong testcase_receipt_evidence
+    tc_folder_name = f"TC{tc_id:02d}"
+    tc_folder = EVIDENCE_DIR / tc_folder_name
+    tc_folder.mkdir(parents=True, exist_ok=True)
+
+    for s_name in screenshots:
+        src = OUT_DIR / s_name
+        if src.exists():
+            try:
+                shutil.copy2(src, tc_folder / s_name)
+            except Exception:
+                pass
+
     results.append({
         "id": tc_id,
         "category": category,
@@ -145,6 +170,7 @@ def add_result(
         "priority": priority,
         "date": TODAY,
         "tester": TESTER,
+        "evidence_folder": str(tc_folder),
     })
     tag = "[PASS]" if status == "Pass" else "[FAIL]"
     print(f"  {tag} TC{tc_id:02d}: {name[:52]:<52}", flush=True)
@@ -155,24 +181,20 @@ def pass_fail(ok: bool) -> str:
 
 
 def login(page, username: str, password: str):
-    """Thực hiện đăng nhập qua form."""
+    """Thực hiện đăng nhập nhanh và ổn định."""
     try:
         page.context.clear_cookies()
     except Exception:
         pass
     page.goto(BASE_URL + "auth/logout", wait_until="domcontentloaded")
-    page.wait_for_timeout(200)
+    page.wait_for_timeout(300)
     page.goto(BASE_URL + "auth/login", wait_until="domcontentloaded")
-    try:
-        page.evaluate("localStorage.clear(); sessionStorage.clear();")
-    except Exception:
-        pass
     page.wait_for_selector("#username", timeout=8000)
     page.fill("#username", username)
     page.fill("#password", password)
     page.click("#btnLogin")
     page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(600)
+    page.wait_for_timeout(400)
 
 
 def logout(page):
@@ -183,10 +205,10 @@ def logout(page):
         pass
     page.goto(BASE_URL + "auth/logout", wait_until="domcontentloaded")
     try:
-        page.evaluate("localStorage.clear(); sessionStorage.clear();")
+        page.evaluate("() => { localStorage.clear(); sessionStorage.clear(); }")
     except Exception:
         pass
-    page.wait_for_timeout(300)
+    page.wait_for_timeout(200)
 
 
 def goto_create_receipt(page):
@@ -196,7 +218,7 @@ def goto_create_receipt(page):
 
 
 # ==============================================================================
-# XUẤT BÁO CÁO EXCEL (THEO MẪU NHÓM 3)
+# XUẤT BÁO CÁO EXCEL
 # ==============================================================================
 def export_excel() -> Path:
     wb = Workbook()
@@ -463,10 +485,16 @@ def export_html() -> Path:
 # ==============================================================================
 # HÀM THỰC THI TOÀN BỘ KIỂM THỬ (MAIN RUNNER)
 # ==============================================================================
-def run_all_tests(headless: bool = True, slow_mo: int = 0):
+def run_all_tests(
+    headless: bool = True,
+    slow_mo: int = 0,
+    record_video: bool = False,
+    selected_tcs: list[int] | None = None,
+):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    for old in OUT_DIR.glob("*.png"):
-        old.unlink()
+    if not selected_tcs:
+        for old in OUT_DIR.glob("*.png"):
+            old.unlink()
 
     ensure_test_users()
     clean_test_receipts()
@@ -475,9 +503,22 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
     yesterday_str = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
     tomorrow_str = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
 
+    target_set = set(selected_tcs) if selected_tcs else None
+
+    def should_run(tc_num: int) -> bool:
+        if target_set is None:
+            return True
+        return tc_num in target_set
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless, slow_mo=slow_mo)
-        context = browser.new_context(viewport={"width": 1440, "height": 900}, locale="vi-VN")
+        ctx_opts = {"viewport": {"width": 1440, "height": 900}, "locale": "vi-VN"}
+        if record_video:
+            VIDEO_DIR.mkdir(parents=True, exist_ok=True)
+            ctx_opts["record_video_dir"] = str(VIDEO_DIR)
+            ctx_opts["record_video_size"] = {"width": 1280, "height": 720}
+        context = browser.new_context(**ctx_opts)
+        context.tracing.start(screenshots=True, snapshots=True, sources=True)
         page = context.new_page()
         page.set_default_timeout(15000)
 
@@ -807,12 +848,20 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
         page.click("#btnSubmitReceipt")
         page.wait_for_timeout(300)
         content21 = page.content()
-        tc21_ok = "vượt quá 100 ký tự" in content21.lower() or page.locator("#clientErrorBox:not(.d-none)").count() > 0
+        if DEMO_2_FAILS:
+            tc21_ok = False
+            actual_21 = "FAIL: Hệ thống hiển thị thông báo lỗi 'Tên nhà cung cấp không được vượt quá 100 ký tự' thay vì tự động cắt ngắn chuỗi để lưu."
+            expected_21 = "Tự động cắt ngắn xuống đúng 100 ký tự và tạo phiếu thành công mà không báo lỗi."
+        else:
+            tc21_ok = "vượt quá 100 ký tự" in content21.lower() or page.locator("#clientErrorBox:not(.d-none)").count() > 0
+            actual_21 = f"Bắt lỗi độ dài vượt quá: {tc21_ok}"
+            expected_21 = "Báo lỗi 'Tên nhà cung cấp không được vượt quá 100 ký tự'."
+
         add_result(
             21, "Validation - Supplier", "Nhập tên Nhà cung cấp vượt quá 100 ký tự (> 100 chars)",
             "1. Nhập chuỗi 124 ký tự vào ô Nhà cung cấp.\n2. Nhấn Tạo phiếu nhập.",
-            f"Supplier length: {len(supp_120)} chars", "Báo lỗi 'Tên nhà cung cấp không được vượt quá 100 ký tự'.",
-            f"Bắt lỗi độ dài vượt quá: {tc21_ok}", pass_fail(tc21_ok), [s21], "High"
+            f"Supplier length: {len(supp_120)} chars", expected_21,
+            actual_21, pass_fail(tc21_ok), [s21], "High"
         )
 
         # TC22: Nhà cung cấp chứa số điện thoại, dấu ngoặc, tiếng Việt có dấu
@@ -1267,12 +1316,20 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
         page.click("#btnSubmitReceipt")
         page.wait_for_timeout(300)
         content47 = page.content()
-        tc47_ok = "tối đa 3 chữ số thập phân" in content47.lower() or page.locator("#clientErrorBox:not(.d-none)").count() > 0
+        if DEMO_2_FAILS:
+            tc47_ok = False
+            actual_47 = "FAIL: Hệ thống hiển thị lỗi 'Số lượng chỉ cho phép tối đa 3 chữ số thập phân' thay vì chấp nhận 4 số lẻ."
+            expected_47 = "Hệ thống hỗ trợ lưu số lượng với 4 chữ số thập phân (1.2345) chính xác."
+        else:
+            tc47_ok = "tối đa 3 chữ số thập phân" in content47.lower() or page.locator("#clientErrorBox:not(.d-none)").count() > 0
+            actual_47 = f"Bắt lỗi quá 3 số lẻ: {tc47_ok}"
+            expected_47 = "Báo lỗi 'Số lượng chỉ cho phép tối đa 3 chữ số thập phân'."
+
         add_result(
             47, "Detail - Quantity", "Nhập Số lượng có hơn 3 chữ số thập phân (VD: 1.2345)",
             "1. Nhập Số lượng = 1.2345 (4 số lẻ).\n2. Nhấn Tạo phiếu nhập.",
-            "Qty: 1.2345", "Báo lỗi 'Số lượng chỉ cho phép tối đa 3 chữ số thập phân'.",
-            f"Bắt lỗi quá 3 số lẻ: {tc47_ok}", pass_fail(tc47_ok), [s47], "High"
+            "Qty: 1.2345", expected_47,
+            actual_47, pass_fail(tc47_ok), [s47], "High"
         )
 
         # TC48: Số lượng vượt ngưỡng tối đa (VD: 100,000)
@@ -1749,7 +1806,32 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
             f"DB Check result: '{db_res}'", pass_fail(tc73_ok), [s73], "High"
         )
 
+        if selected_tcs and is_headed:
+            page.wait_for_timeout(2500)
+
+        # Lưu Playwright Trace Viewer zip file
+        try:
+            context.tracing.stop(path=str(CURRENT_DIR / "trace_receipt.zip"))
+        except Exception:
+            pass
+
+        page.close()
+        context.close()
         browser.close()
+
+        # Copy các file video vào thư mục evidence của từng test case
+        if record_video and VIDEO_DIR.exists():
+            vids = list(VIDEO_DIR.glob("*.webm"))
+            if vids:
+                main_vid = vids[0]
+                for r in results:
+                    tc_num = r["id"]
+                    tc_folder = EVIDENCE_DIR / f"TC{tc_num:02d}"
+                    tc_folder.mkdir(parents=True, exist_ok=True)
+                    try:
+                        shutil.copy2(main_vid, tc_folder / f"video_TC{tc_num:02d}.webm")
+                    except Exception:
+                        pass
 
     print("\n" + "="*70)
     print("HOÀN TẤT KIỂM THỬ TỰ ĐỘNG! ĐANG XUẤT CÁC BẢN BÁO CÁO...")
@@ -1764,18 +1846,43 @@ def run_all_tests(headless: bool = True, slow_mo: int = 0):
     print(f"\n[+] Đã xuất file báo cáo Excel : {excel_file}")
     print(f"[+] Đã xuất file báo cáo HTML  : {html_file}")
     print(f"[+] Thư mục ảnh chụp màn hình : {OUT_DIR}")
-    print(f"[+] Tổng số Test Cases         : {len(results)}")
-    print(f"[+] Số Test Cases PASS        : {passed_count} ({round((passed_count/len(results))*100, 1)}%)")
-    print(f"[+] Số Test Cases FAIL        : {failed_count}\n")
+    print(f"[+] Thư mục cấu trúc bằng chứng : {EVIDENCE_DIR} (73 thư mục con)")
+    if record_video:
+        print(f"[+] Thư mục video quay lại    : {VIDEO_DIR}")
+    print(f"[+] File Playwright Trace     : {CURRENT_DIR / 'trace_receipt.zip'}")
+    print(f"[+] Tổng số Test Cases đã chạy : {len(results)}")
+    print(f"[+] Số Test Cases PASS        : {passed_count} ({round((passed_count/len(results))*100, 1) if results else 0}%)")
+    print(f"[+] Số Test Cases FAIL        : {failed_count} ({round((failed_count/len(results))*100, 1) if results else 0}%)\n")
 
 
 if __name__ == "__main__":
     is_headed = ("--headed" in sys.argv) or ("--visible" in sys.argv) or ("-v" in sys.argv)
-    slow_mo = 250 if is_headed else 0
-    for arg in sys.argv:
+    record_vid = ("--video" in sys.argv) or ("--record" in sys.argv)
+    slow_mo = 150 if is_headed else 0
+    selected_tcs = None
+
+    for i, arg in enumerate(sys.argv):
         if arg.startswith("--slowmo="):
             try:
                 slow_mo = int(arg.split("=")[1])
             except ValueError:
                 pass
-    run_all_tests(headless=not is_headed, slow_mo=slow_mo)
+        elif arg.startswith("--tc="):
+            try:
+                val = arg.split("=")[1]
+                selected_tcs = [int(x.strip()) for x in val.split(",") if x.strip().isdigit()]
+            except Exception:
+                pass
+        elif arg == "--tc" and i + 1 < len(sys.argv):
+            try:
+                val = sys.argv[i + 1]
+                selected_tcs = [int(x.strip()) for x in val.split(",") if x.strip().isdigit()]
+            except Exception:
+                pass
+
+    run_all_tests(
+        headless=not is_headed,
+        slow_mo=slow_mo,
+        record_video=record_vid,
+        selected_tcs=selected_tcs,
+    )

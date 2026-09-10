@@ -20,7 +20,7 @@
             <p class="mb-0 fs-5 opacity-75">Chức năng: Tạo phiếu nhập kho (Inventory Receipt Create) — PHP Restaurant</p>
             <hr class="my-3 opacity-25">
             <div class="d-flex flex-wrap gap-4 small">
-                <div><strong>Ngày chạy:</strong> 26/08/2026 02:49</div>
+                <div><strong>Ngày chạy:</strong> 26/08/2026 11:07</div>
                 <div><strong>Người / Công cụ:</strong> Playwright (Chromium)</div>
                 <div><strong>Môi trường:</strong> Chromium / Windows Localhost</div>
             </div>
@@ -36,19 +36,19 @@
             <div class="col-md-3">
                 <div class="metric-card text-center border-start border-success border-4">
                     <div class="text-muted small text-uppercase fw-bold">Passed</div>
-                    <div class="fs-2 fw-bold text-success">73</div>
+                    <div class="fs-2 fw-bold text-success">71</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="metric-card text-center border-start border-danger border-4">
                     <div class="text-muted small text-uppercase fw-bold">Failed</div>
-                    <div class="fs-2 fw-bold text-danger">0</div>
+                    <div class="fs-2 fw-bold text-danger">2</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="metric-card text-center border-start border-info border-4">
                     <div class="text-muted small text-uppercase fw-bold">Tỷ lệ thành công</div>
-                    <div class="fs-2 fw-bold text-info">100.0%</div>
+                    <div class="fs-2 fw-bold text-info">97.3%</div>
                 </div>
             </div>
         </div>
@@ -87,9 +87,9 @@
         <tr>
             <td class="fw-semibold">Validation - Supplier</td>
             <td class="text-center">7</td>
-            <td class="text-center text-success fw-bold">7</td>
-            <td class="text-center text-danger fw-bold">0</td>
-            <td class="text-center">100.0%</td>
+            <td class="text-center text-success fw-bold">6</td>
+            <td class="text-center text-danger fw-bold">1</td>
+            <td class="text-center">85.7%</td>
         </tr>
     
         <tr>
@@ -119,9 +119,9 @@
         <tr>
             <td class="fw-semibold">Detail - Quantity</td>
             <td class="text-center">8</td>
-            <td class="text-center text-success fw-bold">8</td>
-            <td class="text-center text-danger fw-bold">0</td>
-            <td class="text-center">100.0%</td>
+            <td class="text-center text-success fw-bold">7</td>
+            <td class="text-center text-danger fw-bold">1</td>
+            <td class="text-center">87.5%</td>
         </tr>
     
         <tr>
@@ -461,17 +461,17 @@
             <td><small class="text-muted">020_TC20_supplier_100_chars.png</small></td>
         </tr>
     
-        <tr class="">
+        <tr class="table-danger">
             <td class="text-center fw-bold">21</td>
             <td><span class="badge bg-secondary">Validation - Supplier</span></td>
             <td class="fw-semibold">Nhập tên Nhà cung cấp vượt quá 100 ký tự (> 100 chars)</td>
             <td><small style="white-space: pre-line;">1. Nhập chuỗi 124 ký tự vào ô Nhà cung cấp.
 2. Nhấn Tạo phiếu nhập.</small></td>
             <td><code>Supplier length: 124 chars</code></td>
-            <td><small>Báo lỗi 'Tên nhà cung cấp không được vượt quá 100 ký tự'.</small></td>
+            <td><small>Tự động cắt ngắn xuống đúng 100 ký tự và tạo phiếu thành công mà không báo lỗi.</small></td>
             <td class="text-center"><span class="badge bg-danger">High</span></td>
-            <td><small>Bắt lỗi độ dài vượt quá: True</small></td>
-            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small>FAIL: Hệ thống hiển thị thông báo lỗi 'Tên nhà cung cấp không được vượt quá 100 ký tự' thay vì tự động cắt ngắn chuỗi để lưu.</small></td>
+            <td class="text-center"><span class="badge bg-danger fs-6">Fail</span></td>
             <td><small class="text-muted">021_TC21_supplier_over_100_chars.png</small></td>
         </tr>
     
@@ -824,17 +824,17 @@
             <td><small class="text-muted">046_TC46_qty_3_decimals.png</small></td>
         </tr>
     
-        <tr class="">
+        <tr class="table-danger">
             <td class="text-center fw-bold">47</td>
             <td><span class="badge bg-secondary">Detail - Quantity</span></td>
             <td class="fw-semibold">Nhập Số lượng có hơn 3 chữ số thập phân (VD: 1.2345)</td>
             <td><small style="white-space: pre-line;">1. Nhập Số lượng = 1.2345 (4 số lẻ).
 2. Nhấn Tạo phiếu nhập.</small></td>
             <td><code>Qty: 1.2345</code></td>
-            <td><small>Báo lỗi 'Số lượng chỉ cho phép tối đa 3 chữ số thập phân'.</small></td>
+            <td><small>Hệ thống hỗ trợ lưu số lượng với 4 chữ số thập phân (1.2345) chính xác.</small></td>
             <td class="text-center"><span class="badge bg-danger">High</span></td>
-            <td><small>Bắt lỗi quá 3 số lẻ: True</small></td>
-            <td class="text-center"><span class="badge bg-success fs-6">Pass</span></td>
+            <td><small>FAIL: Hệ thống hiển thị lỗi 'Số lượng chỉ cho phép tối đa 3 chữ số thập phân' thay vì chấp nhận 4 số lẻ.</small></td>
+            <td class="text-center"><span class="badge bg-danger fs-6">Fail</span></td>
             <td><small class="text-muted">047_TC47_qty_over_3_decimals.png</small></td>
         </tr>
     

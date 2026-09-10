@@ -11,7 +11,7 @@ echo [*] Dang khoi dong Chromium... Trinh duyet se tu dong mo len man hinh.
 echo [*] Tien trinh kiem thu se in truc tiep ben duoi:
 echo.
 
-"C:\Users\ducdu\AppData\Local\Programs\Python311\python.exe" -u "%~dp0playwright_inventory_receipt.py" --headed --slowmo=80
+"C:\Users\ducdu\AppData\Local\Programs\Python311\python.exe" -u "%~dp0playwright_inventory_receipt.py" --headed --slowmo=100 --video
 
 echo.
 echo ====================================================================

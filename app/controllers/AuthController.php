@@ -140,7 +140,8 @@ class AuthController extends Controller
             setcookie('jwt_token', '', time() - 3600, '/');
         }
 
-        $this->redirect('auth/login');
+        echo "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><script>localStorage.clear(); sessionStorage.clear(); window.location.href = '" . BASE_URL . "/auth/login';</script></body></html>";
+        exit;
     }
 
     /**
