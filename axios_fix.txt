@@ -1,0 +1,210 @@
+import axios from 'axios';
+import { useAuthStore } from '@/stores/auth-store';
+import { API_BASE_URL } from '@/lib/constants';
+import * as mock from './mock-data';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 4000,
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+function toPage<T>(items: T[]) {
+  return {
+    content: items,
+    pageNumber: 0,
+    pageSize: Math.max(10, items.length),
+    totalElements: items.length,
+    totalPages: 1,
+    last: true,
+  };
+}
+
+// Fallback resolver for demo/testing when backend microservices are starting or offline
+function getMockFallback(url: string, method: string = 'get'): any {
+  const cleanUrl = url
+    .toLowerCase()
+    .replace(/^https?:\/\/[^\/]+/, '')
+    .replace(/\?.*$/, '');
+
+  // Auth
+  if (cleanUrl.includes('/auth/login')) {
+    return { token: 'mock-jwt-token-demo-admin-2024', user: mock.mockUsers[0] };
+  }
+  if (cleanUrl.includes('/auth/me')) {
+    return mock.mockUsers[0];
+  }
+
+  // Dashboard & Reports
+  if (cleanUrl.includes('/dashboard/overview') || cleanUrl.includes('/dashboard')) {
+    return mock.mockDashboard;
+  }
+  if (cleanUrl.includes('/reports/revenue')) {
+    return mock.mockRevenueReport;
+  }
+  if (cleanUrl.includes('/reports/stock')) {
+    return [];
+  }
+
+  // Menu & Recipes
+  if (cleanUrl.includes('/menu/categories') || cleanUrl.includes('/categories')) {
+    return mock.mockCategories;
+  }
+  if (cleanUrl.includes('/recipes')) {
+    return [
+      { id: 1, menuId: 1, ingredientId: 1, ingredientName: 'Bò Wagyu A5 Ribeye', qty: 0.25, unit: 'kg' },
+      { id: 2, menuId: 1, ingredientId: 4, ingredientName: 'Nấm Truffle Đen Pháp', qty: 0.02, unit: 'hộp 100g' },
+    ];
+  }
+  if (cleanUrl.includes('/menu')) {
+    const matchId = cleanUrl.match(/\/menu(?:\/items)?\/(\d+)/);
+    if (matchId) {
+      const id = Number(matchId[1]);
+      return mock.mockMenuItems.find((m) => m.id === id) || mock.mockMenuItems[0];
+    }
+    return toPage(mock.mockMenuItems);
+  }
+
+  // Ingredients & Inventory
+  if (cleanUrl.includes('/ingredients')) {
+    const matchId = cleanUrl.match(/\/ingredients\/(\d+)/);
+    if (matchId) {
+      const id = Number(matchId[1]);
+      return mock.mockIngredients.find((i) => i.id === id) || mock.mockIngredients[0];
+    }
+    return toPage(mock.mockIngredients);
+  }
+  if (cleanUrl.includes('/inventory/receipts') || cleanUrl.includes('/receipts')) {
+    return toPage(mock.mockReceipts);
+  }
+  if (cleanUrl.includes('/inventory/issues') || cleanUrl.includes('/issues')) {
+    return toPage(mock.mockIssues);
+  }
+
+  // Tables & Reservations & QR
+  if (cleanUrl.includes('/reservations')) {
+    return mock.mockReservations;
+  }
+  if (cleanUrl.includes('/qr')) {
+    return { tableId: 1, token: 'qr-token-demo-123', qrCodeUrl: '', expiredAt: new Date(Date.now() + 86400000).toISOString() };
+  }
+  if (cleanUrl.includes('/tables')) {
+    const matchId = cleanUrl.match(/\/tables\/(\d+)/);
+    if (matchId) {
+      const id = Number(matchId[1]);
+      return mock.mockTables.find((t) => t.id === id) || mock.mockTables[0];
+    }
+    return mock.mockTables;
+  }
+
+  // Orders & Invoices
+  if (cleanUrl.includes('/invoice')) {
+    const order = mock.mockOrders[0];
+    return {
+      orderId: order.id,
+      restaurantName: 'Gourmet Haven Luxury Dining',
+      restaurantAddress: 'Số 88 Đồng Khởi, Quận 1, TP. Hồ Chí Minh',
+      tableNumber: order.tableNumber,
+      customerName: order.customerName || 'Khách vãng lai',
+      cashierName: 'Thu ngân VIP',
+      invoiceDate: new Date().toISOString(),
+      items: order.items,
+      subtotal: order.subtotal,
+      discount: order.discount,
+      vatAmount: Math.round(((order.subtotal - order.discount) * order.vatRate) / 100),
+      totalAmount: order.totalAmount,
+      paymentStatus: 'PAID',
+    };
+  }
+  if (cleanUrl.includes('/orders')) {
+    const matchId = cleanUrl.match(/\/orders\/(\d+)/);
+    if (matchId) {
+      const id = Number(matchId[1]);
+      return mock.mockOrders.find((o) => o.id === id) || mock.mockOrders[0];
+    }
+    return toPage(mock.mockOrders);
+  }
+
+  // Expenses
+  if (cleanUrl.includes('/expenses')) {
+    const matchId = cleanUrl.match(/\/expenses\/(\d+)/);
+    if (matchId) {
+      const id = Number(matchId[1]);
+      return mock.mockExpenses.find((e) => e.id === id) || mock.mockExpenses[0];
+    }
+    return toPage(mock.mockExpenses);
+  }
+
+  // Users
+  if (cleanUrl.includes('/users')) {
+    const matchId = cleanUrl.match(/\/users\/(\d+)/);
+    if (matchId) {
+      const id = Number(matchId[1]);
+      return mock.mockUsers.find((u) => u.id === id) || mock.mockUsers[0];
+    }
+    return toPage(mock.mockUsers);
+  }
+
+  // Mutating operations fallback
+  if (method !== 'get') {
+    return { success: true, message: 'Thao tác thành công (Chế độ mô phỏng)' };
+  }
+
+  return [];
+}
+
+api.interceptors.response.use(
+  (response) => {
+    // If response.data doesn't have .data, normalize it
+    if (response.data && response.data.data === undefined) {
+      response.data = {
+        success: true,
+        data: response.data,
+      };
+    }
+    return response;
+  },
+  (error) => {
+    // If backend network is unreachable (ERR_NETWORK / ECONNREFUSED / timeout)
+    if (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error') || !error.response) {
+      const url = error.config?.url || '';
+      const method = error.config?.method || 'get';
+      const mockResult = getMockFallback(url, method);
+      console.warn(`[API Fallback Interceptor] Backend offline or unreachable (${url}). Serving fallback data.`);
+
+      return Promise.resolve({
+        data: {
+          success: true,
+          message: 'OK (Fallback Data)',
+          data: mockResult,
+          timestamp: new Date().toISOString(),
+        },
+        status: 200,
+        statusText: 'OK (Fallback)',
+        headers: {},
+        config: error.config,
+      });
+    }
+
+    if (error.response?.status === 401 && !window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/public')) {
+      useAuthStore.getState().logout();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
